@@ -48,33 +48,58 @@ export default function Chat() {
     setInput('');
     setLoading(true);
 
-    // Simulate AI response
-    setTimeout(async () => {
-      const aiResponseText = "That's a great question! Based on your goals, I'd recommend focusing on consistency first. Would you like me to adjust your nutrition plan or suggest a specific workout?";
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: messages.concat(userMessage).map(m => ({
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            content: m.text
+          }))
+        }),
+      });
+
+      const data = await response.json();
       
-      const aiMessage: Message = {
+      if (data.reply) {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: data.reply,
+          sender: 'ai',
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+
+        if (user) {
+          // Save chat history to database
+          try {
+            await supabase.from('chat_history').insert({
+              user_id: user.id,
+              message: userMessage.text,
+              response: data.reply,
+            });
+          } catch (error) {
+            console.error('Error saving chat history:', error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error calling AI:', error);
+      // Fallback error message
+      const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: aiResponseText,
+        text: "Sorry, I'm having trouble connecting to the server. Please try again later.",
         sender: 'ai',
         timestamp: new Date(),
       };
-
-      setMessages((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setLoading(false);
-
-      if (user) {
-        // Save chat history to database
-        try {
-          await supabase.from('chat_history').insert({
-            user_id: user.id,
-            message: userMessage.text,
-            response: aiResponseText,
-          });
-        } catch (error) {
-          console.error('Error saving chat history:', error);
-        }
-      }
-    }, 1500);
+    }
   };
 
   return (
