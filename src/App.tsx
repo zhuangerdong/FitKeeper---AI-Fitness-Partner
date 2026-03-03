@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Nutrition from './pages/Nutrition';
 import Workout from './pages/Workout';
 import Chat from './pages/Chat';
+import Profile from './pages/Profile';
 import Home from './pages/Home';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -33,21 +34,33 @@ export default function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
-        // Fetch user profile
+        // 尝试获取用户 profile
         supabase
           .from('users')
           .select('*')
           .eq('id', session.user.id)
           .single()
-          .then(({ data }) => {
-            if (data) {
-              setUser(data);
+          .then(({ data, error }) => {
+            if (error || !data) {
+              // 如果 profile 不存在，自动创建
+              console.log('Creating missing user profile...');
+              supabase
+                .from('users')
+                .upsert({
+                  id: session.user.id,
+                  email: session.user.email,
+                  name: session.user.user_metadata?.name || session.user.email!.split('@')[0],
+                }, { onConflict: 'id' })
+                .select()
+                .single()
+                .then(({ data: newProfile }) => {
+                  setUser(newProfile || { id: session.user.id, email: session.user.email!, name: session.user.email! });
+                  setLoading(false);
+                });
             } else {
-               setUser({ id: session.user.id, email: session.user.email!, name: session.user.email! });
+              setUser(data);
+              setLoading(false);
             }
-          })
-          .finally(() => {
-            setLoading(false);
           });
       } else {
         setLoading(false);
@@ -59,16 +72,28 @@ export default function App() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session?.user) {
-         supabase
+        supabase
           .from('users')
           .select('*')
           .eq('id', session.user.id)
           .single()
-          .then(({ data }) => {
-            if (data) {
-              setUser(data);
+          .then(({ data, error }) => {
+            if (error || !data) {
+              // 自动创建缺失的 profile
+              supabase
+                .from('users')
+                .upsert({
+                  id: session.user.id,
+                  email: session.user.email,
+                  name: session.user.user_metadata?.name || session.user.email!.split('@')[0],
+                }, { onConflict: 'id' })
+                .select()
+                .single()
+                .then(({ data: newProfile }) => {
+                  setUser(newProfile || { id: session.user.id, email: session.user.email!, name: session.user.email! });
+                });
             } else {
-               setUser({ id: session.user.id, email: session.user.email!, name: session.user.email! });
+              setUser(data);
             }
           });
       } else {
@@ -131,7 +156,7 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Layout>
-                <div className="text-center mt-10">Profile Page - Coming Soon</div>
+                <Profile />
               </Layout>
             </ProtectedRoute>
           }
