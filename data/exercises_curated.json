@@ -1,0 +1,2170 @@
+{
+  "source": "free-exercise-db (800+ exercises, Public Domain)",
+  "curated_exercises_by_muscle_and_equipment": {
+    "abdominals": {
+      "bodyweight": [
+        {
+          "name": "3/4 Sit-Up",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Air Bike",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Bent-Knee Hip Raise",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Bottoms Up",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Butt-Ups",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Cocoons",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Cross-Body Crunch",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Dead Bug",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Spell Caster",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Dumbbell Side Bend",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        }
+      ],
+      "gym": [
+        {
+          "name": "Cable Judo Flip",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Cable Russian Twists",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Landmine 180's",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "lower back",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Pallof Press With Rotation",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "chest",
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Standing Cable Lift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Standing Cable Wood Chop",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Barbell Ab Rollout",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "lower back",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Barbell Rollout from Bench",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "hamstrings",
+            "lats",
+            "shoulders"
+          ]
+        }
+      ]
+    },
+    "abductors": {
+      "gym": [
+        {
+          "name": "Thigh Abductor",
+          "type": "isolation",
+          "force": "push",
+          "secondary": [
+            "glutes"
+          ]
+        }
+      ]
+    },
+    "adductors": {
+      "gym": [
+        {
+          "name": "Thigh Adductor",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "hamstrings"
+          ]
+        }
+      ]
+    },
+    "biceps": {
+      "dumbbell": [
+        {
+          "name": "Alternate Hammer Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Alternate Incline Dumbbell Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Concentration Curls",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Cross Body Hammer Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Dumbbell Alternate Bicep Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Dumbbell Bicep Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Flexor Incline Dumbbell Curls",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Hammer Curls",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        }
+      ],
+      "gym": [
+        {
+          "name": "Drag Curl",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "High Cable Curls",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Barbell Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Barbell Curls Lying Against An Incline",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Cable Hammer Curls - Rope Attachment",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Cable Preacher Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Close-Grip EZ-Bar Curl with Band",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        },
+        {
+          "name": "Close-Grip EZ Bar Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms"
+          ]
+        }
+      ]
+    },
+    "calves": {
+      "dumbbell": [
+        {
+          "name": "Dumbbell Seated One-Leg Calf Raise",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Calf Raise On A Dumbbell",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Standing Dumbbell Calf Raise",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        }
+      ],
+      "gym": [
+        {
+          "name": "Barbell Seated Calf Raise",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Calf Press",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Calf Press On The Leg Press Machine",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Rocking Standing Calf Raise",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Seated Calf Raise",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Smith Machine Calf Raise",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Smith Machine Reverse Calf Raises",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Standing Barbell Calf Raise",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        }
+      ]
+    },
+    "chest": {
+      "bodyweight": [
+        {
+          "name": "Alternating Floor Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Extended Range One-Arm Kettlebell Floor Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Incline Push-Up",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Incline Push-Up Medium",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Incline Push-Up Reverse Grip",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Incline Push-Up Wide",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Isometric Wipers",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Push-Up Wide",
+          "type": "compound",
+          "force": null,
+          "secondary": [
+            "abdominals",
+            "shoulders",
+            "triceps"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Decline Dumbbell Bench Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Decline Dumbbell Flyes",
+          "type": "compound",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Dumbbell Bench Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Dumbbell Bench Press with Neutral Grip",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Hammer Grip Incline DB Bench Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Incline Dumbbell Bench With Palms Facing In",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Incline Dumbbell Flyes",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Incline Dumbbell Flyes - With A Twist",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders"
+          ]
+        }
+      ],
+      "gym": [
+        {
+          "name": "Barbell Bench Press - Medium Grip",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Barbell Incline Bench Press - Medium Grip",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Cable Chest Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Decline Barbell Bench Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Decline Smith Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Front Raise And Pullover",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "lats",
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Incline Cable Chest Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Leverage Chest Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "shoulders",
+            "triceps"
+          ]
+        }
+      ]
+    },
+    "forearms": {
+      "bodyweight": [
+        {
+          "name": "Bottoms-Up Clean From The Hang Position",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "shoulders"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Palms-Down Dumbbell Wrist Curl Over A Bench",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Palms-Up Dumbbell Wrist Curl Over A Bench",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Seated Dumbbell Palms-Down Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Seated Dumbbell Palms-Up Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Seated One-Arm Dumbbell Palms-Up Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Dumbbell Lying Pronation",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Dumbbell Lying Supination",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Seated One-Arm Dumbbell Palms-Down Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        }
+      ],
+      "gym": [
+        {
+          "name": "Cable Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Finger Curls",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Palms-Down Wrist Curl Over A Bench",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Palms-Up Barbell Wrist Curl Over A Bench",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Seated Palm-Up Barbell Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Seated Palms-Down Barbell Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Seated Two-Arm Palms-Up Low-Pulley Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Standing Palms-Up Barbell Behind The Back Wrist Curl",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        }
+      ]
+    },
+    "glutes": {
+      "bodyweight": [
+        {
+          "name": "Flutter Kicks",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Glute Kickback",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Step-up with Knee Raise",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "hamstrings",
+            "quadriceps"
+          ]
+        },
+        {
+          "name": "Butt Lift (Bridge)",
+          "type": "isolation",
+          "force": "push",
+          "secondary": [
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Leg Lift",
+          "type": "isolation",
+          "force": "push",
+          "secondary": [
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Single Leg Glute Bridge",
+          "type": "isolation",
+          "force": "push",
+          "secondary": [
+            "hamstrings"
+          ]
+        }
+      ],
+      "gym": [
+        {
+          "name": "Pull Through",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "hamstrings",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Barbell Glute Bridge",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Barbell Hip Thrust",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Kneeling Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "hamstrings",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Kneeling Jump Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "hamstrings",
+            "quadriceps"
+          ]
+        },
+        {
+          "name": "One-Legged Cable Kickback",
+          "type": "isolation",
+          "force": "push",
+          "secondary": [
+            "hamstrings"
+          ]
+        }
+      ]
+    },
+    "hamstrings": {
+      "bodyweight": [
+        {
+          "name": "Alternating Hang Clean",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "calves",
+            "forearms",
+            "glutes",
+            "lower back",
+            "traps"
+          ]
+        },
+        {
+          "name": "Double Kettlebell Alternating Hang Clean",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "calves",
+            "forearms",
+            "glutes",
+            "lower back",
+            "quadriceps",
+            "traps"
+          ]
+        },
+        {
+          "name": "Kettlebell Dead Clean",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "calves",
+            "glutes",
+            "lower back",
+            "quadriceps",
+            "traps"
+          ]
+        },
+        {
+          "name": "Kettlebell Hang Clean",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "calves",
+            "glutes",
+            "lower back",
+            "shoulders",
+            "traps"
+          ]
+        },
+        {
+          "name": "Kettlebell One-Legged Deadlift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Lunge Pass Through",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "quadriceps"
+          ]
+        },
+        {
+          "name": "Natural Glute Ham Raise",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "calves",
+            "glutes",
+            "lower back"
+          ]
+        },
+        {
+          "name": "One-Arm Kettlebell Clean",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "lower back",
+            "shoulders",
+            "traps"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Stiff-Legged Dumbbell Deadlift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Dumbbell Clean",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "calves",
+            "forearms",
+            "glutes",
+            "lower back",
+            "quadriceps",
+            "shoulders",
+            "traps"
+          ]
+        }
+      ],
+      "gym": [
+        {
+          "name": "Clean Deadlift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "glutes",
+            "lower back",
+            "middle back",
+            "quadriceps",
+            "traps"
+          ]
+        },
+        {
+          "name": "Smith Machine Stiff-Legged Deadlift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Clean",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "calves",
+            "forearms",
+            "glutes",
+            "lower back",
+            "quadriceps",
+            "shoulders",
+            "traps"
+          ]
+        },
+        {
+          "name": "Glute Ham Raise",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "calves",
+            "glutes"
+          ]
+        },
+        {
+          "name": "Good Morning",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "glutes",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Good Morning off Pins",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "glutes",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Hanging Bar Good Morning",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "glutes",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Muscle Snatch",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "lower back",
+            "quadriceps",
+            "shoulders",
+            "triceps"
+          ]
+        }
+      ]
+    },
+    "lats": {
+      "bodyweight": [
+        {
+          "name": "Chin-Up",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "forearms",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Pullups",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back"
+          ]
+        },
+        {
+          "name": "V-Bar Pullup",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Wide-Grip Rear Pull-Up",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back",
+            "shoulders"
+          ]
+        }
+      ],
+      "gym": [
+        {
+          "name": "Close-Grip Front Lat Pulldown",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Kneeling High Pulley Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Kneeling Single-Arm High Pulley Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Leverage Iso Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back"
+          ]
+        },
+        {
+          "name": "One Arm Lat Pulldown",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Shotgun Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Underhand Cable Pulldowns",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Wide-Grip Lat Pulldown",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back",
+            "shoulders"
+          ]
+        }
+      ]
+    },
+    "lower back": {
+      "bodyweight": [
+        {
+          "name": "Hyperextensions With No Hyperextension Bench",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "hamstrings"
+          ]
+        }
+      ],
+      "gym": [
+        {
+          "name": "Stiff Leg Barbell Good Morning",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Barbell Deadlift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "calves",
+            "forearms",
+            "glutes",
+            "hamstrings",
+            "lats",
+            "middle back",
+            "quadriceps",
+            "traps"
+          ]
+        },
+        {
+          "name": "Deficit Deadlift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "glutes",
+            "hamstrings",
+            "middle back",
+            "quadriceps",
+            "traps"
+          ]
+        },
+        {
+          "name": "Rack Pull with Bands",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "glutes",
+            "hamstrings",
+            "quadriceps",
+            "traps"
+          ]
+        },
+        {
+          "name": "Rack Pulls",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "glutes",
+            "hamstrings",
+            "traps"
+          ]
+        },
+        {
+          "name": "Seated Good Mornings",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes"
+          ]
+        },
+        {
+          "name": "Deadlift with Bands",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "glutes",
+            "hamstrings",
+            "middle back",
+            "quadriceps",
+            "traps"
+          ]
+        },
+        {
+          "name": "Deadlift with Chains",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "glutes",
+            "hamstrings",
+            "middle back",
+            "quadriceps",
+            "traps"
+          ]
+        }
+      ]
+    },
+    "middle back": {
+      "bodyweight": [
+        {
+          "name": "One-Arm Kettlebell Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats"
+          ]
+        },
+        {
+          "name": "Two-Arm Kettlebell Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats"
+          ]
+        },
+        {
+          "name": "Alternating Renegade Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "abdominals",
+            "biceps",
+            "chest",
+            "lats",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Alternating Kettlebell Row",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Bent Over Two-Dumbbell Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Bent Over Two-Dumbbell Row With Palms In",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats"
+          ]
+        },
+        {
+          "name": "Dumbbell Incline Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "forearms",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "One-Arm Dumbbell Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Middle Back Shrug",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        }
+      ],
+      "gym": [
+        {
+          "name": "Bent Over Barbell Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Bent Over One-Arm Long Bar Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats",
+            "lower back",
+            "traps"
+          ]
+        },
+        {
+          "name": "Leverage High Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "lats"
+          ]
+        },
+        {
+          "name": "One-Arm Long Bar Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats"
+          ]
+        },
+        {
+          "name": "Seated Cable Rows",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Smith Machine Bent Over Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Straight Bar Bench Mid Rows",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats"
+          ]
+        },
+        {
+          "name": "T-Bar Row with Handle",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats"
+          ]
+        }
+      ]
+    },
+    "neck": {
+      "bodyweight": [
+        {
+          "name": "Isometric Neck Exercise - Front And Back",
+          "type": "isolation",
+          "force": "static",
+          "secondary": []
+        },
+        {
+          "name": "Isometric Neck Exercise - Sides",
+          "type": "isolation",
+          "force": "static",
+          "secondary": []
+        }
+      ]
+    },
+    "quadriceps": {
+      "bodyweight": [
+        {
+          "name": "Bodyweight Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Goblet Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Freehand Jump Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Front Squats With Two Kettlebells",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes"
+          ]
+        },
+        {
+          "name": "Kettlebell Pistol Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "One-Arm Overhead Kettlebell Squats",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings",
+            "shoulders"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Dumbbell Lunges",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Dumbbell Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Plie Dumbbell Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Split Squat with Dumbbells",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Dumbbell Rear Lunge",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Dumbbell Squat To A Bench",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Dumbbell Step Ups",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        }
+      ],
+      "gym": [
+        {
+          "name": "Barbell Side Split Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "hamstrings",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Barbell Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Barbell Walking Lunge",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Cable Deadlifts",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "glutes",
+            "hamstrings",
+            "lower back"
+          ]
+        },
+        {
+          "name": "Chair Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Hack Squat",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Leg Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "glutes",
+            "hamstrings"
+          ]
+        },
+        {
+          "name": "Leverage Deadlift",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "glutes",
+            "hamstrings"
+          ]
+        }
+      ]
+    },
+    "shoulders": {
+      "bodyweight": [
+        {
+          "name": "Kettlebell Pirate Ships",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals"
+          ]
+        },
+        {
+          "name": "Alternating Kettlebell Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Double Kettlebell Jerk",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "quadriceps",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Double Kettlebell Push Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "calves",
+            "quadriceps",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Kettlebell Arnold Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Kettlebell Seated Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Kettlebell Seesaw Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Kettlebell Thruster",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "quadriceps",
+            "triceps"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Dumbbell Raise",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps"
+          ]
+        },
+        {
+          "name": "Seated Dumbbell Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Standing Alternating Dumbbell Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Standing Dumbbell Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Standing Palm-In One-Arm Dumbbell Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Arnold Dumbbell Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Cuban Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "traps"
+          ]
+        },
+        {
+          "name": "Dumbbell One-Arm Shoulder Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        }
+      ],
+      "gym": [
+        {
+          "name": "Alternating Cable Shoulder Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Anti-Gravity Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "middle back",
+            "traps",
+            "triceps"
+          ]
+        },
+        {
+          "name": "Barbell Incline Shoulder Raise",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest"
+          ]
+        },
+        {
+          "name": "Barbell Rear Delt Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "lats",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Bradford/Rocky Presses",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        },
+        {
+          "name": "Cable Internal Rotation",
+          "type": "compound",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Cable Rope Rear-Delt Rows",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Cable Shoulder Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "triceps"
+          ]
+        }
+      ]
+    },
+    "traps": {
+      "bodyweight": [
+        {
+          "name": "Kettlebell Sumo High Pull",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "adductors",
+            "glutes",
+            "hamstrings",
+            "quadriceps",
+            "shoulders"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Standing Dumbbell Upright Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Dumbbell Shrug",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        }
+      ],
+      "gym": [
+        {
+          "name": "Clean Shrug",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Smith Machine Upright Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "biceps",
+            "middle back",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Snatch Shrug",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Upright Cable Row",
+          "type": "compound",
+          "force": "pull",
+          "secondary": [
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Barbell Shrug",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Barbell Shrug Behind The Back",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": [
+            "forearms",
+            "middle back"
+          ]
+        },
+        {
+          "name": "Cable Shrugs",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        },
+        {
+          "name": "Calf-Machine Shoulder Shrug",
+          "type": "isolation",
+          "force": "pull",
+          "secondary": []
+        }
+      ]
+    },
+    "triceps": {
+      "bodyweight": [
+        {
+          "name": "Bench Dips",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Dips - Triceps Version",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Incline Push-Up Close-Grip",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Close-Grip Push-Up off of a Dumbbell",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Push-Ups - Close Triceps Position",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Body Tricep Press",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Standing Towel Triceps Extension",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Body-Up",
+          "type": "isolation",
+          "force": "push",
+          "secondary": [
+            "abdominals",
+            "forearms"
+          ]
+        }
+      ],
+      "dumbbell": [
+        {
+          "name": "Close-Grip Dumbbell Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Dumbbell Floor Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Decline Dumbbell Triceps Extension",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Dumbbell Tricep Extension -Pronated Grip",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "One Arm Pronated Dumbbell Triceps Extension",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "One Arm Supinated Dumbbell Triceps Extension",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Seated Bent-Over One-Arm Dumbbell Triceps Extension",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        },
+        {
+          "name": "Seated Triceps Press",
+          "type": "isolation",
+          "force": "push",
+          "secondary": []
+        }
+      ],
+      "gym": [
+        {
+          "name": "Close-Grip Barbell Bench Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Close-Grip EZ-Bar Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Dip Machine",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "JM Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Smith Machine Close-Grip Bench Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Bench Press - Powerlifting",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "forearms",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Board Press",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "forearms",
+            "lats",
+            "shoulders"
+          ]
+        },
+        {
+          "name": "Decline Close-Grip Bench To Skull Crusher",
+          "type": "compound",
+          "force": "push",
+          "secondary": [
+            "chest",
+            "shoulders"
+          ]
+        }
+      ]
+    }
+  }
+}
