@@ -19,6 +19,7 @@ export default function Register() {
     setError(null);
 
     try {
+      // 1. 创建 Supabase Auth 用户
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -31,29 +32,41 @@ export default function Register() {
 
       if (error) throw error;
 
-      if (data.user && data.session) {
-        // Create user profile in 'users' table
+      // 2. 用户创建成功（可能需要 email 确认）
+      if (data.user) {
+        // 尝试在 users 表创建 profile
         const { error: profileError } = await supabase
           .from('users')
-          .insert([
+          .upsert(
             {
               id: data.user.id,
               email: data.user.email,
               name: name,
             },
-          ]);
+            { onConflict: 'id' }
+          );
 
-        if (profileError) throw profileError;
+        // 如果插入失败，记录错误但不阻止注册
+        if (profileError) {
+          console.error('Failed to create user profile:', profileError);
+          // 不抛出错误，让用户继续
+        }
 
-        setSession(data.session);
-        setUser({ id: data.user.id, email: data.user.email!, name });
-        navigate('/dashboard');
+        // 3. 如果有 session，直接登录
+        if (data.session) {
+          setSession(data.session);
+          setUser({ id: data.user.id, email: data.user.email!, name });
+          navigate('/dashboard');
+        } else {
+          // 需要邮箱确认
+          setError('注册成功！请检查邮箱确认账户。');
+        }
       } else {
-        // Handle case where email confirmation is required
-        setError('Registration successful! Please check your email to confirm your account.');
+        setError('注册失败，请重试。');
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error('Registration error:', err);
+      setError(err.message || '注册失败，请重试。');
     } finally {
       setLoading(false);
     }
