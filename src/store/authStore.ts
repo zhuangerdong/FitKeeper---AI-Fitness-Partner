@@ -2,10 +2,18 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   name: string;
+  height?: number | null;
+  weight?: number | null;
+  birth_date?: string | null;
+  gender?: 'male' | 'female' | null;
+  activity_level?: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active' | null;
+  fitness_goal?: 'lose_weight' | 'gain_muscle' | 'maintain' | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface AuthState {

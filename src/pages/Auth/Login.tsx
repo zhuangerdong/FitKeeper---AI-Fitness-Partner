@@ -27,18 +27,38 @@ export default function Login() {
 
       if (data.user && data.session) {
         setSession(data.session);
-        // Fetch user profile from database
+        
+        // 尝试获取用户 profile
         const { data: userProfile, error: profileError } = await supabase
           .from('users')
           .select('*')
           .eq('id', data.user.id)
           .single();
 
-        if (profileError) {
-           console.error('Error fetching user profile:', profileError);
+        if (profileError || !userProfile) {
+          // 如果 profile 不存在，自动创建一个
+          console.log('User profile not found, creating one...');
+          const { data: newProfile, error: createError } = await supabase
+            .from('users')
+            .upsert(
+              {
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.user_metadata?.name || data.user.email!.split('@')[0],
+              },
+              { onConflict: 'id' }
+            )
+            .select()
+            .single();
+          
+          if (createError) {
+            console.error('Failed to create profile:', createError);
+          }
+          setUser(newProfile || { id: data.user.id, email: data.user.email!, name: data.user.email! });
+        } else {
+          setUser(userProfile);
         }
-
-        setUser(userProfile || { id: data.user.id, email: data.user.email, name: data.user.email });
+        
         navigate('/dashboard');
       }
     } catch (err: any) {
