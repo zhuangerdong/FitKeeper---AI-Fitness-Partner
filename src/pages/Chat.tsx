@@ -54,6 +54,7 @@ export default function Chat() {
   // 处理从其他页面跳转过来的初始消息
   const hasProcessedInitialMessage = useRef(false);
   const skipNextLoadMessages = useRef(false);
+  const isCreatingConsultation = useRef(false);
   
   useEffect(() => {
     // 先检查 sessionStorage（用于强制刷新的情况）
@@ -62,6 +63,7 @@ export default function Chat() {
       sessionStorage.removeItem('pendingConsultation');
       const { initialMessage, createNewSession } = JSON.parse(pendingConsultation);
       skipNextLoadMessages.current = true;
+      isCreatingConsultation.current = true;
       if (createNewSession) {
         createNewSessionAndSend(initialMessage);
       }
@@ -80,9 +82,9 @@ export default function Chat() {
     
     if (state?.initialMessage && user?.id) {
       hasProcessedInitialMessage.current = true;
-      skipNextLoadMessages.current = true;  // 跳过下一次 loadSessionMessages
+      skipNextLoadMessages.current = true;
+      isCreatingConsultation.current = true;
       
-      // 先保存消息，再清除 state
       const messageToSend = state.initialMessage;
       const needNewSession = state.createNewSession;
       
@@ -92,6 +94,7 @@ export default function Chat() {
       if (needNewSession) {
         createNewSessionAndSend(messageToSend);
       } else if (currentSession) {
+        isCreatingConsultation.current = false;
         setTimeout(() => {
           handleSend(messageToSend);
         }, 300);
@@ -114,7 +117,6 @@ export default function Chat() {
   // 创建新 session 并发送消息
   const createNewSessionAndSend = async (message: string) => {
     try {
-      // 先清空当前消息，避免显示旧 session 的消息
       setMessages([]);
       
       const { data, error } = await supabase
@@ -128,15 +130,17 @@ export default function Chat() {
 
       if (error) throw error;
       
-      // 添加到会话列表并设为当前
       const newSession = { ...data, message_count: 0 };
       setSessions(prev => [newSession, ...prev]);
       setCurrentSession(newSession);
       
-      // 直接发送消息，使用新的 session ID
+      // New session is set, safe to allow loadSessions to proceed normally
+      isCreatingConsultation.current = false;
+      
       sendMessageWithSession(message, data.id);
     } catch (error) {
       console.error('Error creating new session:', error);
+      isCreatingConsultation.current = false;
     }
   };
   
@@ -261,16 +265,16 @@ export default function Chat() {
         );
         setSessions(sessionsWithCount);
 
-        // 如果没有当前会话，选择第一个
-        if (!currentSession && sessionsWithCount.length > 0) {
-          setCurrentSession(sessionsWithCount[0]);
-        } else if (currentSession) {
-          // 更新当前会话的信息
-          const updated = sessionsWithCount.find(s => s.id === currentSession.id);
-          if (updated) setCurrentSession(updated);
+        // Don't touch currentSession if we're creating a consultation session
+        if (!isCreatingConsultation.current) {
+          if (!currentSession && sessionsWithCount.length > 0) {
+            setCurrentSession(sessionsWithCount[0]);
+          } else if (currentSession) {
+            const updated = sessionsWithCount.find(s => s.id === currentSession.id);
+            if (updated) setCurrentSession(updated);
+          }
         }
-      } else {
-        // 没有会话，创建一个新的
+      } else if (!isCreatingConsultation.current) {
         await createNewSession();
       }
     } catch (error) {
