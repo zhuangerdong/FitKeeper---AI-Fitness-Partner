@@ -1,0 +1,225 @@
+\documentclass[10pt, letterpaper]{article}
+
+% Packages:
+\usepackage[
+    ignoreheadfoot,
+    top=1 cm,
+    bottom=1.2 cm,
+    left=1.8 cm,
+    right=1.8 cm,
+    footskip=1.0 cm
+]{geometry}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{primaryColor}{RGB}{0, 0, 0}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage[
+    pdftitle={庄尔冬的简历},
+    pdfauthor={庄尔冬},
+    colorlinks=true,
+    urlcolor=primaryColor
+]{hyperref}
+\usepackage{changepage}
+\usepackage{paracol}
+\usepackage{needspace}
+\usepackage{iftex}
+
+% 使用 CJKutf8 进行中文支持
+\usepackage{CJKutf8}
+
+\usepackage{charter} % 英文字体
+
+\raggedright
+\pagestyle{empty}
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\setlength{\columnsep}{0.15cm}
+\pagenumbering{gobble}
+
+% Section formatting - 标题大写加粗，增加间距
+\titleformat{\section}{\needspace{4\baselineskip}\bfseries\large\uppercase}{}{0pt}{}[\vspace{1pt}\titlerule]
+\titlespacing{\section}{-1pt}{0.4 cm}{0.2 cm}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}
+
+\newenvironment{highlights}{
+    \begin{itemize}[topsep=0.1cm,itemsep=0.1cm,leftmargin=12pt]
+}{
+    \end{itemize}
+}
+
+\newenvironment{onecolentry}{
+    \begin{adjustwidth}{0cm}{0cm}
+}{
+    \end{adjustwidth}
+}
+
+\newenvironment{twocolentry}[2][]{
+    \onecolentry
+    \def\secondColumn{#2}
+    \setcolumnwidth{\fill, 5.5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endonecolentry
+}
+
+\begin{document}
+\begin{CJK*}{UTF8}{gbsn}
+
+% ---------- HEADER ----------
+\begin{center}
+    {\fontsize{22pt}{22pt}\selectfont \textbf{庄尔冬}} \\[0.3cm]
+
+    \normalsize
+    \href{mailto:zhuangerdong@gmail.com}{zhuangerdong@gmail.com}
+    \quad $\mid$ \quad
+    +86 1333 3183 8809
+    \quad $\mid$ \quad
+    中国香港
+\end{center}
+
+\vspace{0.1cm}
+
+% ---------- EDUCATION ----------
+\section{教育背景}
+
+\begin{onecolentry}
+\textbf{香港城市大学} \hfill \textit{09/2024 -- 12/2026 (预计)}\\
+\textbf{数据科学理学硕士}
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item \textbf{核心课程}: 动态规划与强化学习、深度学习、统计机器学习、数据分析与可视化、时间序列与循环神经网络
+\end{highlights}
+\end{onecolentry}
+
+\vspace{0.2cm}
+
+\begin{onecolentry}
+\textbf{多伦多大学密西沙加分校} \hfill \textit{09/2021 -- 06/2025}\\
+\textbf{数学与应用统计荣誉理学学士} (优异成绩)
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item \textbf{核心课程}: 回归分析、应用概率统计、实验设计、调查与观测数据、复变函数、微观经济学
+\end{highlights}
+\end{onecolentry}
+
+% ---------- PROFESSIONAL EXPERIENCE ----------
+\section{实习经历}
+
+\begin{onecolentry}
+\textit{IBM(多伦多)} \hfill \textit{05/2024 -- 06/2024}\\
+\textit{数据分析(实习教育项目)}
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item 使用Python(Pandas、Numpy)分析产品，提取数据驱动获取见解
+\item 探索提示工程和生成式AI在商业智能中的应用
+\item 向技术和非技术利益相关者清晰展示分析结果，提升沟通效率
+\end{highlights}
+\end{onecolentry}
+
+\vspace{0.2cm}
+
+\begin{onecolentry}
+\textbf{上海银行(上海)} \hfill \textit{06/2023 -- 08/2023}\\
+\textit{数据分析实习生}
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item 使用Excel清洗、验证和分析大规模金融数据集，确保数据准确性
+\item 生成自动化报告和可视化图表，为管理层提供决策支持
+\end{highlights}
+\end{onecolentry}
+
+% ---------- PROJECT EXPERIENCE ----------
+\section{项目经历}
+
+\begin{onecolentry}
+\textbf{FitKeeper — AI 智能健身伴侣} \hfill \textit{02/2026}
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item 结合大语言模型与本地健身知识库，构建检索增强生成(RAG)系统，显著提升AI在运动生理学领域的回答准确率
+\item 设计自适应训练推荐算法，基于用户画像与历史数据动态生成个性化分化训练方案，实现科学的渐进超负荷
+\item 应用代谢公式与时间序列分析技术对多维生理数据建模，为用户提供精准的营养摄入动态规划与趋势预测
+\item 主导全栈架构设计，通过Supabase数据库优化与边缘计算部署，保障复杂算法模型在移动端的高效实时响应
+\end{highlights}
+\end{onecolentry}
+
+\vspace{0.2cm}
+
+\begin{onecolentry}
+\textbf{超级马里奥兄弟强化学习智能体} \hfill \textit{12/2025}
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item 训练深度强化学习智能体成功通过“超级马里奥兄弟”第一关
+\item 通过适配Python库和语言版本，解决了旧版环境的兼容性问题
+\item 应用图像预处理和帧调整技术，显著提高训练效率
+\item 使用TensorBoard实时监控训练指标，并微调超参数以确保模型稳定收敛
+\end{highlights}
+\end{onecolentry}
+
+\vspace{0.2cm}
+
+\begin{onecolentry}
+基于卷积神经网络的汽车图像分类 \hfill \textit{11/2025}
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item 构建并训练卷积神经网络(CNN)模型，实现高精度的汽车图像分类
+\item 实施数据增强(Data Augmentation)和预处理策略，有效减少模型过拟合
+\item 评估模型准确性并分析其在不同场景下的泛化能力
+\end{highlights}
+\end{onecolentry}
+
+\vspace{0.2cm}
+
+\begin{onecolentry}
+\textit{MyStore 项目 — 全栈电商 Web 应用} \hfill \textit{10/2025}
+\end{onecolentry}
+
+\begin{onecolentry}
+\begin{highlights}
+\item 开发具有完整前后端功能的全栈电商网站，实现从浏览到支付的闭环流程
+\item 设计并实现\textit{MySQL}数据库，支持用户身份验证、商品管理和订单查询
+\item 通过数据库规范化设计减少数据冗余，提升系统查询效率
+\item 持续迭代界面设计，优化前端交互，显著改善用户体验
+\end{highlights}
+\end{onecolentry}
+
+% ---------- SKILLS ----------
+\section{技能专长}
+
+\begin{onecolentry}
+\textbf{编程与工具:} Python, SQL, R, MySQL, LaTeX, Excel, Git
+\end{onecolentry}
+
+\begin{onecolentry}
+\textbf{机器学习:} 强化学习, 深度学习, CNN, 时间序列分析, Scikit-learn, PyTorch/TensorFlow
+\end{onecolentry}
+
+\begin{onecolentry}
+\textbf{数据分析:} Pandas, NumPy, Tableau, Power BI, Matplotlib, Seaborn
+\end{onecolentry}
+
+\begin{onecolentry}
+\textbf{语言:} 普通话 (母语), 英语 (流利)
+\end{onecolentry}
+
+\end{CJK*}
+\end{document}
