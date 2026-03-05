@@ -53,16 +53,50 @@ export default function Chat() {
 
   // 处理从其他页面跳转过来的初始消息
   useEffect(() => {
-    const state = location.state as { initialMessage?: string } | null;
-    if (state?.initialMessage && currentSession && !sending) {
+    const state = location.state as { initialMessage?: string; createNewSession?: boolean } | null;
+    if (state?.initialMessage && !sending) {
       // 清除 location state，避免重复发送
       navigate(location.pathname, { replace: true, state: null });
-      // 自动发送初始消息
-      setTimeout(() => {
-        handleSend(state.initialMessage);
-      }, 500);
+      
+      // 如果需要创建新 session
+      if (state.createNewSession) {
+        createNewSessionAndSend(state.initialMessage);
+      } else if (currentSession) {
+        // 使用当前 session
+        setTimeout(() => {
+          handleSend(state.initialMessage);
+        }, 500);
+      }
     }
   }, [currentSession, location.state]);
+  
+  // 创建新 session 并发送消息
+  const createNewSessionAndSend = async (message: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('chat_sessions')
+        .insert({
+          user_id: user!.id,
+          title: message.slice(0, 20) + (message.length > 20 ? '...' : ''),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      // 添加到会话列表并设为当前
+      const newSession = { ...data, message_count: 0 };
+      setSessions(prev => [newSession, ...prev]);
+      setCurrentSession(newSession);
+      
+      // 等待 session 设置完成后发送消息
+      setTimeout(() => {
+        handleSend(message);
+      }, 100);
+    } catch (error) {
+      console.error('Error creating new session:', error);
+    }
+  };
 
   // 加载会话列表
   useEffect(() => {

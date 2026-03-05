@@ -86,11 +86,12 @@ export default function Workout() {
     setLoading(false);
   };
 
-  // 开始咨询 - 跳转到 Chat 页面
+  // 开始咨询 - 跳转到 Chat 页面并创建新 session
   const startConsultation = () => {
     navigate('/chat', { 
       state: { 
-        initialMessage: '我想创建一个训练计划' 
+        initialMessage: '我想创建一个训练计划',
+        createNewSession: true
       } 
     });
   };
