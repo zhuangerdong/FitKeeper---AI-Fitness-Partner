@@ -827,7 +827,7 @@ router.post('/', async (req, res) => {
     // 第一次调用 - 可能会触发工具
     let response = await anthropic.messages.create({
       model: process.env.ANTHROPIC_MODEL || 'MiniMax-M2.5',
-      max_tokens: 2048,
+      max_tokens: 4096,
       system: systemPrompt,
       tools,
       messages: conversationMessages,
@@ -870,7 +870,7 @@ router.post('/', async (req, res) => {
 
       response = await anthropic.messages.create({
         model: process.env.ANTHROPIC_MODEL || 'MiniMax-M2.5',
-        max_tokens: 2048,
+        max_tokens: 4096,
         system: systemPrompt,
         tools,
         messages: conversationMessages,
