@@ -1,0 +1,386 @@
+{
+  "source": "Based on StrongerByScience meta-analyses, Menno Henselmans research, and 2024-2025 peer-reviewed literature",
+  "version": "2.0",
+  "last_updated": "2024-03",
+  
+  "periodization": {
+    "description": "周期化训练比非周期化训练在力量增长上快约22%（meta-analysis）",
+    
+    "linear_periodization": {
+      "description": "线性周期化：训练量逐渐降低，强度逐渐增加",
+      "best_for": ["beginner", "strength_focus"],
+      "mesocycle_length": "4-8 weeks",
+      "example": {
+        "week_1": { "intensity": "65% 1RM", "reps": "10-12", "volume": "100%" },
+        "week_2": { "intensity": "70% 1RM", "reps": "8-10", "volume": "95%" },
+        "week_3": { "intensity": "75% 1RM", "reps": "6-8", "volume": "90%" },
+        "week_4": { "intensity": "80% 1RM", "reps": "4-6", "volume": "85%" },
+        "week_5": { "type": "deload", "intensity": "60% 1RM", "volume": "50%" }
+      }
+    },
+    
+    "daily_undulating_periodization": {
+      "description": "每日波动周期化：一周内不同训练日使用不同强度",
+      "best_for": ["intermediate", "advanced", "trained_lifters"],
+      "effectiveness": "对有经验训练者比线性周期化效果好约28%",
+      "example_3x_week": {
+        "day_1": { "focus": "力量", "intensity": "85-90% 1RM", "reps": "3-5" },
+        "day_2": { "focus": "肌肥大", "intensity": "70-75% 1RM", "reps": "8-12" },
+        "day_3": { "focus": "力量耐力", "intensity": "55-65% 1RM", "reps": "15-20" }
+      }
+    },
+    
+    "weekly_undulating_periodization": {
+      "description": "每周波动周期化：不同周使用不同重点",
+      "best_for": ["intermediate"],
+      "example": {
+        "week_1": { "focus": "高容量", "sets": 5, "reps": "8-12", "intensity": "65-70%" },
+        "week_2": { "focus": "高强度", "sets": 3, "reps": "3-5", "intensity": "85-90%" },
+        "week_3": { "focus": "中等", "sets": 4, "reps": "6-8", "intensity": "75-80%" },
+        "week_4": { "type": "deload", "sets": 2, "reps": "8-10", "intensity": "60%" }
+      }
+    },
+    
+    "block_periodization": {
+      "description": "板块周期化：专注某一适应能力的训练板块",
+      "best_for": ["advanced", "athletes"],
+      "blocks": {
+        "accumulation": { "duration": "2-4 weeks", "focus": "容量积累，动作学习" },
+        "transmutation": { "duration": "2-4 weeks", "focus": "专项力量转化" },
+        "realization": { "duration": "1-2 weeks", "focus": "巅峰表现/测试" }
+      }
+    }
+  },
+  
+  "volume_guidelines": {
+    "source": "2024-2025 meta-regression research",
+    "hypertrophy": {
+      "minimum_effective": {
+        "sets_per_muscle_per_week": "4-6",
+        "note": "低于此数值仍有效果，但收益有限"
+      },
+      "beginner": {
+        "sets_per_muscle_per_week": "10-12",
+        "optimal_frequency": "2-3x per week",
+        "note": "新手对容量敏感，过多反而恢复不足"
+      },
+      "intermediate": {
+        "sets_per_muscle_per_week": "12-16",
+        "optimal_frequency": "2x per week",
+        "note": "可开始尝试更高容量和频率"
+      },
+      "advanced": {
+        "sets_per_muscle_per_week": "16-20",
+        "optimal_frequency": "2x per week",
+        "note": "需要更高的容量刺激"
+      },
+      "maximum_useful": {
+        "sets_per_muscle_per_week": "20-25",
+        "note": "超过此范围边际收益递减明显"
+      },
+      "overtraining_risk": {
+        "sets_per_muscle_per_week": ">30",
+        "warning": "存在过度训练风险"
+      }
+    },
+    "strength": {
+      "beginner": { "sets_per_compound_lift": "8-10 per week" },
+      "intermediate": { "sets_per_compound_lift": "10-14 per week" },
+      "advanced": { "sets_per_compound_lift": "12-16 per week" }
+    }
+  },
+  
+  "rep_range_recommendations": {
+    "research_summary": "不同次数范围在肌肉增长上差异约10-15%，但力量训练低次数更优",
+    "hypertrophy": {
+      "optimal": { "reps": "6-12", "intensity": "65-85% 1RM", "rest": "90-120s" },
+      "effective_low": { "reps": "1-5", "intensity": "85-100% 1RM", "note": "增肌有效，但可能影响其他训练" },
+      "effective_high": { "reps": "15-30", "intensity": "30-60% 1RM", "note": "增肌有效，但代谢疲劳较大" }
+    },
+    "strength": {
+      "optimal": { "reps": "1-5", "sets": "3-5", "intensity": "85-100% 1RM", "rest": "3-5 min" },
+      "note": "需要配合足够的训练容量"
+    },
+    "practical_distribution": {
+      "main_work": { "percentage": "60-70%", "reps": "个人最佳范围（通常6-12）" },
+      "heavy_work": { "percentage": "15-20%", "reps": "1-5", "purpose": "力量和神经适应" },
+      "light_work": { "percentage": "15-20%", "reps": "15-20", "purpose": "代谢压力和恢复" }
+    },
+    "exercise_specific": {
+      "squat_deadlift": { "recommended_reps": "3-8（有经验）", "5-10（新手）" },
+      "bench_press": { "recommended_reps": "5-10" },
+      "rows": { "recommended_reps": "8-15" },
+      "pull_ups": { "recommended_reps": "5-10" },
+      "overhead_press": { "recommended_reps": "5-10" },
+      "dumbbell_press": { "recommended_reps": "8-15" },
+      "unilateral_legs": { "recommended_reps": "8-15" },
+      "isolation": { "recommended_reps": "10-20" }
+    }
+  },
+  
+  "sra_curve": {
+    "description": "Stimulus-Recovery-Adaptation curve: 决定最佳训练频率",
+    "recovery_times": {
+      "beginner": { "hours": "48-96", "note": "肌肉损伤大，修复能力弱" },
+      "intermediate": { "hours": "36", "note": "适应训练压力" },
+      "advanced": { "hours": "24", "note": "恢复能力强" },
+      "elite": { "hours": "16", "note": "极高的恢复效率" }
+    },
+    "factors_affecting": {
+      "exercise_type": {
+        "stretchers": { "examples": ["Romanian Deadlift", "Split Squat"], "recovery": "最长", "reason": "肌肉拉长位高张力" },
+        "activators": { "examples": ["Hip Thrust", "Step-up"], "recovery": "中等" },
+        "pumpers": { "examples": ["Band exercises", "Cable fly"], "recovery": "最短" }
+      },
+      "volume_per_session": "容量越大，恢复时间越长",
+      "mental_stress": "高压力可使恢复时间延长至2倍",
+      "sleep_quality": "睡眠不足显著延长恢复时间",
+      "nutrition": "蛋白质充足可加速恢复"
+    },
+    "optimal_frequency_calculation": {
+      "formula": "训练频率 = 168小时 / SRA时间",
+      "examples": {
+        "beginner_72h": "168/72 = 2.3次/周",
+        "intermediate_48h": "168/48 = 3.5次/周",
+        "advanced_36h": "168/36 = 4.7次/周"
+      }
+    }
+  },
+  
+  "progressive_overload": {
+    "methods": {
+      "double_progression": {
+        "description": "先增次数，再增重量（最适合大多数人）",
+        "example": {
+          "week_1": "8, 8, 7 reps @ 60kg",
+          "week_2": "10, 9, 9 reps @ 60kg",
+          "week_3": "12, 11, 10 reps @ 60kg",
+          "week_4": "8, 8, 8 reps @ 65kg（增加2.5-5kg）"
+        }
+      },
+      "linear_weight_addition": {
+        "description": "每次训练增加固定重量",
+        "best_for": "beginner",
+        "example": "每周增加2.5kg",
+        "limitation": "只能持续2-4个月"
+      },
+      "rpe_based": {
+        "description": "基于感知努力程度训练",
+        "scale": {
+          "6": "还可做4次，热身重量",
+          "7": "还可做3次，轻松工作重量",
+          "8": "还可做2次，中等强度",
+          "9": "还可做1次，有挑战",
+          "10": "无法再做更多，极限努力"
+        },
+        "recommended_training_rpe": "7-9"
+      }
+    },
+    "progression_rate_by_level": {
+      "beginner": { "upper_body": "1-2.5kg/week", "lower_body": "2.5-5kg/week" },
+      "intermediate": { "upper_body": "0.5-1kg/week", "lower_body": "1-2.5kg/week" },
+      "advanced": { "upper_body": "0.25-0.5kg/week", "lower_body": "0.5-1kg/week" }
+    }
+  },
+  
+  "deload": {
+    "frequency": "每4-6周或感知过度训练时",
+    "signs_needed": [
+      "连续2次以上训练表现下降",
+      "持续关节疼痛或异常酸痛",
+      "睡眠质量下降",
+      "训练动力降低",
+      "静息心率升高"
+    ],
+    "methods": {
+      "volume_deload": { "sets": "减少40-50%", "intensity": "保持", "duration": "1周" },
+      "intensity_deload": { "intensity": "减少20-30%", "sets": "保持", "duration": "1周" },
+      "full_deload": { "intensity": "减少20-30%", "sets": "减少50%", "duration": "1周" }
+    }
+  },
+  
+  "session_structure": {
+    "warmup": {
+      "duration": "5-10分钟",
+      "components": [
+        "轻度有氧（跑步机/单车/划船机）",
+        "动态拉伸",
+        "关节活动度练习"
+      ],
+      "specific_warmup_for_compound": [
+        { "sets": 1, "reps": 10, "percentage": "50% 工作重量" },
+        { "sets": 1, "reps": 5, "percentage": "70% 工作重量" },
+        { "sets": 1, "reps": 3, "percentage": "85% 工作重量" }
+      ]
+    },
+    "exercise_order": [
+      "1. 复合多关节动作（深蹲/硬拉/卧推/推举/划船）",
+      "2. 次级复合动作",
+      "3. 孤立动作",
+      "4. 核心/腹肌训练"
+    ],
+    "exercises_per_session": {
+      "beginner": "4-5 个动作",
+      "intermediate": "5-6 个动作",
+      "advanced": "6-8 个动作"
+    },
+    "session_duration": {
+      "recommended": "45-75分钟（不含热身/冷身）",
+      "warning": "超过90分钟可能影响训练质量"
+    },
+    "cooldown": {
+      "duration": "5分钟",
+      "activities": ["轻度有氧", "静态拉伸"]
+    }
+  },
+  
+  "split_recommendations": {
+    "by_days_per_week": {
+      "2_days": {
+        "split": "全身A + 全身B",
+        "best_for": "beginner",
+        "frequency_per_muscle": "2x/周",
+        "recovery_between_same_muscle": "72-96小时"
+      },
+      "3_days": {
+        "split": "全身A/B/C 或 推/拉/腿",
+        "best_for": "beginner to intermediate",
+        "frequency_per_muscle": "1-1.5x/周",
+        "notes": "PPL适合力量训练为主"
+      },
+      "4_days": {
+        "split": "上肢/下肢 × 2",
+        "best_for": "intermediate",
+        "frequency_per_muscle": "2x/周",
+        "recommended": "最均衡的选择"
+      },
+      "5_days": {
+        "split": "推/拉/腿/上肢/下肢",
+        "best_for": "intermediate to advanced",
+        "frequency_per_muscle": "1.5-2x/周"
+      },
+      "6_days": {
+        "split": "推/拉/腿 × 2",
+        "best_for": "advanced",
+        "frequency_per_muscle": "2x/周",
+        "requires": "优秀的恢复能力、睡眠和营养"
+      }
+    }
+  },
+  
+  "goal_specific_programming": {
+    "muscle_gain": {
+      "primary_methods": ["中高容量", "复合动作优先", "渐进超负荷"],
+      "rep_range_distribution": { "6-12_reps": "60-70%", "1-5_reps": "15-20%", "15-20_reps": "15-20%" },
+      "rest_periods": { "compound": "2-3分钟", "isolation": "60-90秒" },
+      "tempo": "控制离心，爆发向心（如2-0-1-0）"
+    },
+    "strength_gain": {
+      "primary_methods": ["高强度训练", "复合动作主导", "充分休息"],
+      "rep_range_distribution": { "1-5_reps": "70%", "6-10_reps": "20%", "10+_reps": "10%" },
+      "rest_periods": { "main_lifts": "3-5分钟" },
+      "periodization": "线性或波动周期化"
+    },
+    "fat_loss": {
+      "primary_methods": ["保持训练强度", "高蛋白饮食", "适量有氧"],
+      "critical_note": "减脂期不要降低训练强度！降低强度会导致肌肉流失",
+      "volume_adjustment": "可能需要略微降低容量以适应热量缺口",
+      "rest_periods": "可略微缩短以增加热量消耗"
+    },
+    "general_fitness": {
+      "primary_methods": ["均衡发展", "功能性动作", "可持续性"],
+      "recommended_frequency": "3-4次/周",
+      "session_structure": "复合动作 + HIIT/ conditioning"
+    }
+  },
+  
+  "autoregulation": {
+    "description": "根据每日状态调整训练",
+    "methods": {
+      "rpe": "基于感知努力程度",
+      "rir": "Reps In Reserve - 保留次数",
+      "velocity_based": "基于动作速度（需要设备）"
+    },
+    "bad_day_adjustments": [
+      "降低目标次数/重量",
+      "减少组数",
+      "延长休息时间",
+      "替换为更轻松的动作变式"
+    ],
+    "good_day_adjustments": [
+      "尝试更高重量",
+      "增加1-2组",
+      "挑战更多次数"
+    ]
+  },
+  
+  "common_mistakes": {
+    "volume_too_high": {
+      "symptom": "持续疲劳、表现下降、关节疼痛",
+      "solution": "降低容量至10-15组/肌群/周"
+    },
+    "no_progressive_overload": {
+      "symptom": "长期无进步",
+      "solution": "系统记录训练数据，每周增加重量或次数"
+    },
+    "ignoring_recovery": {
+      "symptom": "过度训练症状",
+      "solution": "确保7-9小时睡眠，每4-6周减载"
+    },
+    "too_much_variety": {
+      "symptom": "无法追踪进步",
+      "solution": "坚持基础动作4-8周再更换"
+    },
+    "ego_lifting": {
+      "symptom": "动作变形、受伤风险",
+      "solution": "使用可控重量，保留2-3次力竭余量"
+    }
+  },
+  
+  "workout_plan_data_structure": {
+    "description": "推荐的训练计划数据结构",
+    "plan_metadata": {
+      "plan_name": "string",
+      "goal": "hypertrophy|strength|powerbuilding|fat_loss|general",
+      "difficulty_level": "beginner|intermediate|advanced",
+      "days_per_week": "number",
+      "periodization_type": "linear|daily_undulating|weekly_undulating|block",
+      "mesocycle_length_weeks": "number"
+    },
+    "weekly_schedule": {
+      "description": "每周训练安排",
+      "structure": {
+        "day_number": "number",
+        "day_name": "string (如'推日'、'拉日'、'腿部')",
+        "focus": "string",
+        "exercises": [
+          {
+            "name": "string",
+            "type": "compound|accessory|isolation",
+            "primary_muscle": "string",
+            "sets": "number",
+            "reps": "string (如'8-12'或'6-8')",
+            "intensity": "string (如'70-75% 1RM'或'RPE 7-8')",
+            "rest_seconds": "number",
+            "notes": "string (如'控制离心')",
+            "progression": "double_progression|weight_addition|rpe",
+            "alternative_exercises": ["array of strings"]
+          }
+        ]
+      }
+    },
+    "progression_tracking": {
+      "description": "渐进超负荷追踪",
+      "fields": [
+        "weekly_progressions (每周的重量/次数变化)",
+        "personal_records (个人记录)",
+        "volume_trends (容量趋势)"
+      ]
+    },
+    "deload_week": {
+      "description": "减载周安排",
+      "week_number": "number (通常4-6)",
+      "method": "volume_deload|intensity_deload|full_deload"
+    }
+  }
+}

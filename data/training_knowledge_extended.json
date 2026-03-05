@@ -1,0 +1,293 @@
+{
+  "source": "Based on ACSM/NSCA guidelines, ISSA, ACE, and meta-analysis research 2024-2025",
+  
+  "training_types": {
+    "strength": {
+      "name": "力量训练",
+      "description": "以提升最大力量为主，适合举重、力量举爱好者",
+      "primary_focus": "神经适应 + 肌纤维招募",
+      "rep_ranges": {
+        "main_lifts": { "reps": "1-5", "sets": "3-5", "rest": "3-5min", "intensity": "85-100% 1RM" },
+        "accessory": { "reps": "6-8", "sets": "3-4", "rest": "2-3min", "intensity": "70-80% 1RM" }
+      },
+      "volume": {
+        "beginner": { "sets_per_muscle": "8-10", "frequency": "2-3x/week" },
+        "intermediate": { "sets_per_muscle": "10-14", "frequency": "3-4x/week" },
+        "advanced": { "sets_per_muscle": "12-16", "frequency": "4-5x/week" }
+      },
+      "exercise_selection": {
+        "priority": ["compound lifts (squat, deadlift, bench, OHP)"],
+        "progression": "Linear periodization or daily undulating"
+      }
+    },
+    "hypertrophy": {
+      "name": "肌肥大训练",
+      "description": "以增加肌肉围度为主，适合健美、形体改善",
+      "primary_focus": "代谢压力 + 机械张力",
+      "rep_ranges": {
+        "main_lifts": { "reps": "6-12", "sets": "3-4", "rest": "90-120s", "intensity": "65-85% 1RM" },
+        "isolation": { "reps": "12-20", "sets": "3-4", "rest": "60-90s", "intensity": "50-65% 1RM" }
+      },
+      "volume": {
+        "beginner": { "sets_per_muscle": "10-12", "frequency": "2x/week" },
+        "intermediate": { "sets_per_muscle": "12-16", "frequency": "2x/week" },
+        "advanced": { "sets_per_muscle": "16-20", "frequency": "2x/week" }
+      },
+      "techniques": ["drop sets", "supersets", "rest-pause", "peak contraction"]
+    },
+    "powerbuilding": {
+      "name": "力量+形体",
+      "description": "兼顾力量与肌肥大，适合大多数人",
+      "primary_focus": "力量 + 肌肉量平衡发展",
+      "rep_ranges": {
+        "compound": { "reps": "5-8", "sets": "3-4", "rest": "2-3min", "intensity": "75-85% 1RM" },
+        "accessory": { "reps": "8-15", "sets": "3-4", "rest": "60-90s", "intensity": "60-75% 1RM" }
+      },
+      "split_example": {
+        "4_day": "Upper/Lower x2",
+        "5_day": "Push/Pull/Legs/Upper/Lower"
+      }
+    },
+    "endurance": {
+      "name": "肌耐力训练",
+      "description": "提升肌肉耐力和心血管健康",
+      "primary_focus": "线粒体密度 + 毛细血管化",
+      "rep_ranges": {
+        "main": { "reps": "15-25", "sets": "2-3", "rest": "30-60s", "intensity": "40-60% 1RM" }
+      },
+      "techniques": ["circuit training", "HIIT", "supersets with minimal rest"]
+    },
+    "fat_loss": {
+      "name": "减脂塑形",
+      "description": "在保持肌肉的同时减少体脂",
+      "primary_focus": "热量消耗 + 肌肉保持",
+      "rep_ranges": {
+        "compound": { "reps": "8-15", "sets": "3-4", "rest": "60-90s", "intensity": "60-75% 1RM" },
+        "isolation": { "reps": "12-20", "sets": "2-3", "rest": "45-60s", "intensity": "50-60% 1RM" }
+      },
+      "special_considerations": [
+        "Higher protein (1.8-2.4g/kg)",
+        "Maintain training intensity despite caloric deficit",
+        "Add cardio (LISS or HIIT) post-workout or separate sessions"
+      ]
+    },
+    "functional": {
+      "name": "功能性训练",
+      "description": "提升日常活动和运动表现",
+      "primary_focus": "动作模式 + 核心稳定 + 本体感觉",
+      "movement_patterns": ["squat", "hinge", "lunge", "push", "pull", "carry", "rotation"],
+      "equipment_preference": ["kettlebells", "cables", "bodyweight", "medicine balls"],
+      "progression": "Movement complexity → Load → Speed"
+    }
+  },
+
+  "detailed_splits": {
+    "2_day_fullbody": {
+      "name": "2天全身分化",
+      "best_for": ["beginner", "limited time"],
+      "schedule": {
+        "Day A": {
+          "focus": "Full Body A",
+          "exercises": [
+            { "type": "compound", "pattern": "squat", "examples": ["Barbell Squat", "Goblet Squat"] },
+            { "type": "compound", "pattern": "push", "examples": ["Bench Press", "Push-Up"] },
+            { "type": "compound", "pattern": "pull", "examples": ["Barbell Row", "Cable Row"] },
+            { "type": "accessory", "pattern": "hinge", "examples": ["Romanian Deadlift"] }
+          ]
+        },
+        "Day B": {
+          "focus": "Full Body B",
+          "exercises": [
+            { "type": "compound", "pattern": "hinge", "examples": ["Deadlift", "Kettlebell Swing"] },
+            { "type": "compound", "pattern": "push", "examples": ["Overhead Press", "Dips"] },
+            { "type": "compound", "pattern": "pull", "examples": ["Pull-Up", "Lat Pulldown"] },
+            { "type": "accessory", "pattern": "squat", "examples": ["Lunges", "Leg Press"] }
+          ]
+        }
+      }
+    },
+    "3_day_push_pull_legs": {
+      "name": "3天推拉腿",
+      "best_for": ["beginner to intermediate"],
+      "schedule": {
+        "Push": {
+          "muscles": ["chest", "shoulders", "triceps"],
+          "exercises": [
+            { "type": "compound", "primary": "chest", "examples": ["Bench Press", "Incline Press"] },
+            { "type": "compound", "primary": "shoulders", "examples": ["Overhead Press", "Arnold Press"] },
+            { "type": "accessory", "primary": "chest", "examples": ["Cable Fly", "Dips"] },
+            { "type": "isolation", "primary": "triceps", "examples": ["Tricep Pushdown", "Overhead Extension"] }
+          ]
+        },
+        "Pull": {
+          "muscles": ["back", "biceps", "rear delts"],
+          "exercises": [
+            { "type": "compound", "primary": "lats", "examples": ["Pull-Up", "Lat Pulldown"] },
+            { "type": "compound", "primary": "mid back", "examples": ["Barbell Row", "Seated Row"] },
+            { "type": "accessory", "primary": "rear delts", "examples": ["Face Pull", "Reverse Fly"] },
+            { "type": "isolation", "primary": "biceps", "examples": ["Barbell Curl", "Hammer Curl"] }
+          ]
+        },
+        "Legs": {
+          "muscles": ["quads", "hamstrings", "glutes", "calves"],
+          "exercises": [
+            { "type": "compound", "primary": "quads", "examples": ["Barbell Squat", "Leg Press"] },
+            { "type": "compound", "primary": "hamstrings", "examples": ["Romanian Deadlift", "Leg Curl"] },
+            { "type": "accessory", "primary": "glutes", "examples": ["Hip Thrust", "Bulgarian Split Squat"] },
+            { "type": "isolation", "primary": "calves", "examples": ["Standing Calf Raise", "Seated Calf Raise"] }
+          ]
+        }
+      }
+    },
+    "4_day_upper_lower": {
+      "name": "4天上下肢分化",
+      "best_for": ["intermediate"],
+      "frequency": "2x per muscle group per week",
+      "schedule": {
+        "Upper A": { "focus": "Upper Body Strength", "exercises_count": "5-6" },
+        "Lower A": { "focus": "Lower Body Strength", "exercises_count": "5-6" },
+        "Upper B": { "focus": "Upper Body Hypertrophy", "exercises_count": "6-7" },
+        "Lower B": { "focus": "Lower Body Hypertrophy", "exercises_count": "6-7" }
+      }
+    },
+    "5_day_pplul": {
+      "name": "5天推拉腿上肢下肢",
+      "best_for": ["intermediate to advanced"],
+      "schedule": ["Push", "Pull", "Legs", "Upper", "Lower"]
+    },
+    "6_day_ppl_ppl": {
+      "name": "6天推拉腿×2",
+      "best_for": ["advanced", "high recovery capacity"],
+      "frequency": "2x per muscle group per week",
+      "notes": "Requires good sleep and nutrition"
+    }
+  },
+
+  "exercise_database_structure": {
+    "exercise_fields": {
+      "required": ["name", "primary_muscle", "type", "equipment"],
+      "optional": ["secondary_muscles", "instructions", "image_url", "video_url", "alternatives", "difficulty"]
+    },
+    "exercise_types": {
+      "compound": "Multi-joint, higher neurological demand, primary mass/strength builders",
+      "isolation": "Single-joint, targeted muscle development, lower systemic fatigue"
+    },
+    "equipment_mapping": {
+      "gym": ["barbell", "dumbbell", "cable", "machine", "smith machine", "kettlebell"],
+      "dumbbells": ["dumbbell only"],
+      "bodyweight": ["body only", "minimal equipment"]
+    }
+  },
+
+  "progression_methods": {
+    "linear": {
+      "description": "Add weight each session",
+      "best_for": "beginners",
+      "example": "Add 2.5-5kg when target reps achieved for all sets"
+    },
+    "double_progression": {
+      "description": "Build reps within range, then add weight",
+      "best_for": "intermediate",
+      "example": "Week 1: 8,8,8 → Week 2: 10,9,9 → Week 3: 12,11,10 → Add 5kg, back to 8s"
+    },
+    "rpe_based": {
+      "description": "Train based on rate of perceived exertion",
+      "scale": {
+        "RPE 6": "4 reps in reserve, warmup weight",
+        "RPE 7": "3 reps in reserve, easy working weight",
+        "RPE 8": "2 reps in reserve, moderate working weight",
+        "RPE 9": "1 rep in reserve, challenging",
+        "RPE 10": "0 reps in reserve, maximum effort"
+      }
+    },
+    "percentage_based": {
+      "description": "Train based on percentage of 1RM",
+      "example": "Week 1: 70%, Week 2: 75%, Week 3: 80%, Week 4: Deload"
+    }
+  },
+
+  "warmup_protocols": {
+    "general": {
+      "duration": "5-10 min",
+      "activities": ["light cardio (treadmill, bike, rowing)", "dynamic stretching", "mobility drills"]
+    },
+    "specific": {
+      "compound_lifts": [
+        { "sets": 1, "reps": 10, "percentage": "50% working weight", "purpose": "warmup" },
+        { "sets": 1, "reps": 5, "percentage": "70% working weight", "purpose": "activation" },
+        { "sets": 1, "reps": 3, "percentage": "85% working weight", "purpose": "primer" }
+      ],
+      "accessory_lifts": "1-2 light warmup sets sufficient"
+    }
+  },
+
+  "deload_guidelines": {
+    "frequency": "Every 4-6 weeks or when feeling overtrained",
+    "methods": {
+      "volume_deload": "Reduce sets by 40-50%, keep intensity",
+      "intensity_deload": "Reduce weight by 20-30%, keep volume",
+      "full_deload": "Reduce both volume and intensity"
+    },
+    "signs_needed": [
+      "Decreased performance for 2+ consecutive sessions",
+      "Persistent joint pain or unusual soreness",
+      "Poor sleep despite good sleep hygiene",
+      "Decreased motivation or mood"
+    ]
+  },
+
+  "special_populations": {
+    "beginner_guidelines": {
+      "volume": "Lower than intermediate, focus on form",
+      "progression": "Linear progression recommended",
+      "session_duration": "45-60 min",
+      "recommended_split": "Full body 2-3x per week"
+    },
+    "older_adults": {
+      "considerations": ["Longer warmup", "Lower starting intensity", "Focus on functional movements"],
+      "safety": "Avoid exercises causing joint pain, prioritize machine-based options initially"
+    },
+    "rehabilitation": {
+      "note": "Always consult physical therapist/doctor",
+      "principles": ["Start with isometric exercises", "Progress to concentric then eccentric", "Low load, high control"]
+    }
+  },
+
+  "exercise_alternatives": {
+    "squat": {
+      "primary": ["Barbell Back Squat", "Barbell Front Squat"],
+      "dumbbell": ["Goblet Squat", "Dumbbell Split Squat"],
+      "bodyweight": ["Bodyweight Squat", "Bulgarian Split Squat", "Pistol Squat Progression"],
+      "machine": ["Leg Press", "Hack Squat", "Smith Machine Squat"]
+    },
+    "deadlift": {
+      "primary": ["Conventional Deadlift", "Sumo Deadlift"],
+      "dumbbell": ["Dumbbell Deadlift", "Single Leg RDL"],
+      "bodyweight": ["Single Leg Glute Bridge", "Nordic Hamstring Progression"],
+      "machine": ["Smith Machine Deadlift", "Cable Pull-Through"]
+    },
+    "bench_press": {
+      "primary": ["Barbell Bench Press", "Incline Barbell Press"],
+      "dumbbell": ["Dumbbell Bench Press", "Incline Dumbbell Press"],
+      "bodyweight": ["Push-Up", "Diamond Push-Up", "Decline Push-Up"],
+      "machine": ["Chest Press Machine", "Smith Machine Press"]
+    },
+    "overhead_press": {
+      "primary": ["Barbell Overhead Press", "Seated Barbell Press"],
+      "dumbbell": ["Dumbbell Shoulder Press", "Arnold Press"],
+      "bodyweight": ["Pike Push-Up", "Handstand Push-Up Progression"],
+      "machine": ["Shoulder Press Machine", "Smith Machine Overhead Press"]
+    },
+    "row": {
+      "primary": ["Barbell Row", "T-Bar Row"],
+      "dumbbell": ["One-Arm Dumbbell Row", "Chest-Supported Row"],
+      "bodyweight": ["Inverted Row", "Door Frame Row"],
+      "machine": ["Seated Cable Row", "Machine Row"]
+    },
+    "pull_up": {
+      "primary": ["Pull-Up", "Chin-Up"],
+      "regression": ["Assisted Pull-Up Machine", "Band-Assisted Pull-Up", "Negative Pull-Up"],
+      "alternative": ["Lat Pulldown", "Straight-Arm Pulldown"]
+    }
+  }
+}
