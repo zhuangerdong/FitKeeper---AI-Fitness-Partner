@@ -1,20 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Dumbbell, Plus, ChevronRight, Play, Pause, Trash2, X, Activity, Clock, Calendar, Target, TrendingUp, RotateCcw, Flame } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Dumbbell, Plus, ChevronRight, Play, Pause, Trash2, Activity, Clock, Target, TrendingUp, RotateCcw, Flame, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import { format } from 'date-fns';
-
-const workoutSchema = z.object({
-  experience: z.enum(['beginner', 'intermediate', 'advanced']),
-  goal: z.enum(['hypertrophy', 'strength', 'fat_loss', 'general']),
-  equipment: z.enum(['gym', 'dumbbells', 'bodyweight']),
-  daysPerWeek: z.number().min(1).max(7),
-});
-
-type WorkoutFormValues = z.infer<typeof workoutSchema>;
 
 interface Exercise {
   name: string;
@@ -73,26 +62,10 @@ interface WorkoutPlan {
 
 export default function Workout() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [plans, setPlans] = useState<WorkoutPlan[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
-  const [generating, setGenerating] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<WorkoutFormValues>({
-    resolver: zodResolver(workoutSchema),
-    defaultValues: {
-      experience: 'beginner',
-      goal: 'hypertrophy',
-      equipment: 'gym',
-      daysPerWeek: 3,
-    },
-  });
 
   // 加载所有 plans
   useEffect(() => {
@@ -113,69 +86,13 @@ export default function Workout() {
     setLoading(false);
   };
 
-  const onSubmit = async (data: WorkoutFormValues) => {
-    if (!user?.id) return;
-    setGenerating(true);
-
-    const equipmentLabel: Record<string, string> = {
-      gym: '健身房（杠铃、哑铃、器械都可以用）',
-      dumbbells: '只有哑铃',
-      bodyweight: '没有器材，只能徒手训练',
-    };
-
-    const goalLabel: Record<string, string> = {
-      hypertrophy: '增肌',
-      strength: '力量',
-      fat_loss: '减脂塑形',
-      general: '一般健身',
-    };
-
-    const prompt = `请帮我创建一个科学、个性化的训练计划，要求如下：
-- 训练经验：${data.experience === 'beginner' ? '初级(0-1年)' : data.experience === 'intermediate' ? '中级(1-3年)' : '高级(3年以上)'}
-- 训练目标：${goalLabel[data.goal]}
-- 器材条件：${equipmentLabel[data.equipment]}
-- 每周训练天数：${data.daysPerWeek}天
-
-请按照科学训练原则设计：
-1. 根据我的经验水平确定每周训练容量（组数/肌群）
-2. 选择合适的周期化方式
-3. 安排减载周
-4. 提供渐进超负荷的具体方法
-
-请调用 create_workout_plan 工具生成完整计划。`;
-
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: prompt }],
-          user_id: user.id,
-        }),
-      });
-
-      if (!response.ok) throw new Error('AI 生成失败');
-
-      await loadPlans();
-      setShowCreateForm(false);
-      reset();
-
-      // 自动选中最新创建的计划
-      const { data: latestPlan } = await supabase
-        .from('workout_plans')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (latestPlan) setSelectedPlan(latestPlan);
-    } catch (err: any) {
-      console.error('Error creating plan:', err);
-      alert('创建失败：' + err.message);
-    }
-
-    setGenerating(false);
+  // 开始咨询 - 跳转到 Chat 页面
+  const startConsultation = () => {
+    navigate('/chat', { 
+      state: { 
+        initialMessage: '我想创建一个训练计划' 
+      } 
+    });
   };
 
   // 激活/停用计划
@@ -513,107 +430,13 @@ export default function Workout() {
       <div className="flex justify-between items-center">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900">训练计划</h1>
         <button
-          onClick={() => setShowCreateForm(true)}
+          onClick={startConsultation}
           className="inline-flex items-center px-3 md:px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700"
         >
-          <Plus className="h-4 w-4 mr-1 md:mr-2" />
-          <span className="hidden sm:inline">新建</span>计划
+          <MessageCircle className="h-4 w-4 mr-1 md:mr-2" />
+          <span className="hidden sm:inline">咨询</span>创建计划
         </button>
       </div>
-
-      {/* 创建表单弹窗 */}
-      {showCreateForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-lg font-medium">创建科学训练计划</h2>
-              <button onClick={() => setShowCreateForm(false)} className="text-gray-400 hover:text-gray-600">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">训练经验</label>
-                <select
-                  {...register('experience')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm p-2 border"
-                >
-                  <option value="beginner">初级 (0-1 年)</option>
-                  <option value="intermediate">中级 (1-3 年)</option>
-                  <option value="advanced">高级 (3+ 年)</option>
-                </select>
-                <p className="text-xs text-gray-400 mt-1">影响训练容量和渐进方式</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">训练目标</label>
-                <select
-                  {...register('goal')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm p-2 border"
-                >
-                  <option value="hypertrophy">增肌</option>
-                  <option value="strength">力量</option>
-                  <option value="fat_loss">减脂塑形</option>
-                  <option value="general">一般健身</option>
-                </select>
-                <p className="text-xs text-gray-400 mt-1">决定次数范围和周期化方式</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">器材条件</label>
-                <select
-                  {...register('equipment')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm p-2 border"
-                >
-                  <option value="gym">健身房</option>
-                  <option value="dumbbells">仅哑铃</option>
-                  <option value="bodyweight">徒手训练</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">每周训练天数</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={7}
-                  {...register('daysPerWeek', { valueAsNumber: true })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm p-2 border"
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  推荐：新手2-3天，中级3-4天，高级4-6天
-                </p>
-              </div>
-
-              <div className="bg-blue-50 rounded-lg p-3 text-sm text-blue-700">
-                <p className="font-medium mb-1">🔬 科学训练原则</p>
-                <ul className="text-xs space-y-1 text-blue-600">
-                  <li>• 基于研究支持的训练容量和频率</li>
-                  <li>• 自动安排周期化和减载周</li>
-                  <li>• 提供渐进超负荷的具体方法</li>
-                </ul>
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateForm(false)}
-                  className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  取消
-                </button>
-                <button
-                  type="submit"
-                  disabled={generating}
-                  className="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50"
-                >
-                  {generating ? 'AI 生成中...' : 'AI 生成计划'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* 计划列表 */}
       {loading ? (
@@ -621,14 +444,16 @@ export default function Workout() {
       ) : plans.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-12 text-center">
           <Dumbbell className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-          <p className="text-gray-500 mb-4">还没有训练计划</p>
-          <p className="text-sm text-gray-400 mb-4">让 AI 根据科学原则为你创建个性化训练计划</p>
+          <p className="text-gray-500 mb-2">还没有训练计划</p>
+          <p className="text-sm text-gray-400 mb-4">
+            点击下方按钮，与 AI 教练对话创建个性化训练计划
+          </p>
           <button
-            onClick={() => setShowCreateForm(true)}
+            onClick={startConsultation}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            创建你的第一个计划
+            <MessageCircle className="h-4 w-4 mr-2" />
+            开始咨询
           </button>
         </div>
       ) : (
