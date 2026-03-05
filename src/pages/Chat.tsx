@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Send, User, Bot, Loader2, Plus, Trash2, MessageSquare, ChevronLeft, ChevronRight, Cloud } from 'lucide-react';
+import { Send, User, Bot, Loader2, Plus, Trash2, MessageSquare, ChevronLeft, ChevronRight, Cloud, Dumbbell, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import ReactMarkdown from 'react-markdown';
@@ -11,6 +11,7 @@ interface Message {
   text: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  createdPlanId?: string | null;
 }
 
 interface ChatSession {
@@ -276,6 +277,7 @@ export default function Chat() {
           text: data.reply,
           sender: 'ai',
           timestamp: new Date(),
+          createdPlanId: data.createdPlanId || null,
         };
 
         setMessages(prev => [...prev, aiMessage]);
@@ -427,35 +429,55 @@ export default function Chat() {
             </div>
           ) : (
             messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={message.id} className="space-y-2">
                 <div
-                  className={`max-w-[85%] ${
-                    message.sender === 'user'
-                      ? 'bg-orange-600 text-white rounded-l-xl rounded-tr-xl'
-                      : 'bg-gray-100 text-gray-900 rounded-r-xl rounded-tl-xl'
-                  } p-3 shadow-sm`}
+                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className="flex items-start gap-2">
-                    <div className="flex-shrink-0 mt-0.5">
-                      {message.sender === 'user' ? (
-                        <User className="h-4 w-4 text-orange-200" />
-                      ) : (
-                        <Bot className="h-4 w-4 text-gray-500" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1 prose-table:my-2 prose-th:p-2 prose-td:p-2 prose-th:border prose-td:border prose-th:border-gray-300 prose-td:border-gray-300">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.text}</ReactMarkdown>
+                  <div
+                    className={`max-w-[85%] ${
+                      message.sender === 'user'
+                        ? 'bg-orange-600 text-white rounded-l-xl rounded-tr-xl'
+                        : 'bg-gray-100 text-gray-900 rounded-r-xl rounded-tl-xl'
+                    } p-3 shadow-sm`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {message.sender === 'user' ? (
+                          <User className="h-4 w-4 text-orange-200" />
+                        ) : (
+                          <Bot className="h-4 w-4 text-gray-500" />
+                        )}
                       </div>
-                      <span className="text-xs opacity-60 mt-1 block text-right">
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+                      <div className="flex-1">
+                        <div className="text-sm prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1 prose-table:my-2 prose-th:p-2 prose-td:p-2 prose-th:border prose-td:border prose-th:border-gray-300 prose-td:border-gray-300">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.text}</ReactMarkdown>
+                        </div>
+                        <span className="text-xs opacity-60 mt-1 block text-right">
+                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
+                
+                {/* 训练计划创建成功后的 UI 组件 */}
+                {message.sender === 'ai' && message.createdPlanId && (
+                  <div className="flex justify-start ml-6">
+                    <button
+                      onClick={() => navigate('/workout')}
+                      className="inline-flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg shadow-md hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-[1.02]"
+                    >
+                      <div className="h-8 w-8 bg-white/20 rounded-full flex items-center justify-center">
+                        <Dumbbell className="h-4 w-4" />
+                      </div>
+                      <div className="text-left">
+                        <div className="font-medium text-sm">训练计划已创建 ✅</div>
+                        <div className="text-xs text-orange-100">点击查看完整计划</div>
+                      </div>
+                      <ArrowRight className="h-4 w-4 ml-1" />
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           )}

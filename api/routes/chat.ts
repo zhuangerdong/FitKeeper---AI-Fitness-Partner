@@ -752,8 +752,22 @@ router.post('/', async (req, res) => {
 - 有没有不喜欢做的动作或伤病需要避免？
 - 精力和恢复能力如何？睡眠质量好吗？
 
-### 第四步：确认后再生成
-收集完信息后，确认用户需求，然后调用工具创建计划。
+### 第四步：确认后必须调用工具创建
+收集完信息并确认用户需求后，**你必须调用 create_workout_plan 工具**来创建并保存计划！
+
+**不要只说"现在帮你创建"，必须实际调用工具！**
+
+调用 create_workout_plan 时需要的参数：
+- user_id: 用户ID（已提供）
+- plan_name: 计划名称（如"减脂塑形4周计划"）
+- goal: 目标类型（hypertrophy/strength/fat_loss/general）
+- difficulty_level: 难度（beginner/intermediate/advanced）
+- days_per_week: 每周几天
+- periodization_type: 周期化类型
+- exercises_schedule: 每天的训练安排
+- weekly_volume_summary: 每周容量总结
+- deload_schedule: 减载安排
+- progression_plan: 渐进超负荷方法
 
 ## ========== 科学训练计划创建流程 ==========
 
@@ -783,12 +797,6 @@ router.post('/', async (req, res) => {
 - 新手：线性周期化（每周增加重量）
 - 有经验者：每日波动周期化（DUP）效果更好约28%
 - 中周期长度：4-6周后减载一周
-
-### 创建计划步骤
-1. 调用 get_user_profile 获取用户信息
-2. 调用 get_scientific_training_knowledge 获取研究支持的参数
-3. 调用 query_exercise_db 查询动作
-4. 调用 create_workout_plan 创建并保存计划
 
 ## 重要：主动记录用户信息
 当用户在对话中提到以下任何信息时，你必须**立即调用 update_user_profile 工具**保存：
@@ -873,13 +881,37 @@ router.post('/', async (req, res) => {
 
     // 提取回复文本
     let reply = '';
+    let createdPlanId: string | null = null;
+    
     for (const block of response.content) {
       if (block.type === 'text') {
         reply += block.text;
       }
     }
+    
+    // 检查是否有成功创建的训练计划（从工具调用结果中提取）
+    // 遍历对话历史，找到 create_workout_plan 的成功结果
+    for (const msg of conversationMessages) {
+      if (msg.role === 'user' && Array.isArray(msg.content)) {
+        for (const item of msg.content) {
+          if (item.type === 'tool_result' && typeof item.content === 'string') {
+            try {
+              const result = JSON.parse(item.content);
+              if (result.success && result.plan_id) {
+                createdPlanId = result.plan_id;
+              }
+            } catch (e) {
+              // ignore parse errors
+            }
+          }
+        }
+      }
+    }
 
-    res.json({ reply });
+    res.json({ 
+      reply,
+      createdPlanId
+    });
   } catch (error: any) {
     console.error('Agent error:', error);
     res.status(500).json({ 
