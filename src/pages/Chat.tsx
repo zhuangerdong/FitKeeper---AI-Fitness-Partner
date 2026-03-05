@@ -4,6 +4,7 @@ import { Send, User, Bot, Loader2, Plus, Trash2, MessageSquare, ChevronLeft, Che
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
   id: string;
@@ -446,8 +447,8 @@ export default function Chat() {
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1">
-                        <ReactMarkdown>{message.text}</ReactMarkdown>
+                      <div className="text-sm prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:my-1 prose-table:my-2 prose-th:p-2 prose-td:p-2 prose-th:border prose-td:border prose-th:border-gray-300 prose-td:border-gray-300">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.text}</ReactMarkdown>
                       </div>
                       <span className="text-xs opacity-60 mt-1 block text-right">
                         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
