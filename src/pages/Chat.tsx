@@ -56,6 +56,18 @@ export default function Chat() {
   const skipNextLoadMessages = useRef(false);
   
   useEffect(() => {
+    // 先检查 sessionStorage（用于强制刷新的情况）
+    const pendingConsultation = sessionStorage.getItem('pendingConsultation');
+    if (pendingConsultation && user?.id) {
+      sessionStorage.removeItem('pendingConsultation');
+      const { initialMessage, createNewSession } = JSON.parse(pendingConsultation);
+      skipNextLoadMessages.current = true;
+      if (createNewSession) {
+        createNewSessionAndSend(initialMessage);
+      }
+      return;
+    }
+    
     const state = location.state as { initialMessage?: string; createNewSession?: boolean } | null;
     
     // 如果有新的 initialMessage，重置 flag
