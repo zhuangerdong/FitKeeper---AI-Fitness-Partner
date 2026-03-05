@@ -48,6 +48,7 @@ export default function Chat() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -255,6 +256,15 @@ export default function Chat() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setSending(true);
+    
+    // 检测是否是创建计划的最后确认步骤
+    const isConfirmation = text.includes('确认') || text.includes('好的') || text.includes('可以') || text.includes('没问题') || text.includes('开始吧') || text.includes('创建');
+    const hadPlanDiscussion = messages.some(m => 
+      m.text.includes('训练计划') || m.text.includes('分化') || m.text.includes('目标') || m.text.includes('训练经验')
+    );
+    if (isConfirmation && hadPlanDiscussion) {
+      setIsCreatingPlan(true);
+    }
 
     try {
       const response = await fetch('/api/chat', {
@@ -270,6 +280,9 @@ export default function Chat() {
       });
 
       const data = await response.json();
+      
+      // 重置创建计划状态
+      setIsCreatingPlan(false);
 
       if (data.reply) {
         const aiMessage: Message = {
@@ -306,6 +319,7 @@ export default function Chat() {
       }
     } catch (error) {
       console.error('Error:', error);
+      setIsCreatingPlan(false);
       setMessages(prev => [
         ...prev,
         {
@@ -487,7 +501,26 @@ export default function Chat() {
               <div className="bg-gray-100 text-gray-900 rounded-r-xl rounded-tl-xl p-3 shadow-sm flex items-center gap-2">
                 <Bot className="h-4 w-4 text-gray-500" />
                 <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
-                <span className="text-sm text-gray-500">正在思考...</span>
+                <span className="text-sm text-gray-500">
+                  {isCreatingPlan ? '正在生成训练计划...' : '正在思考...'}
+                </span>
+              </div>
+            </div>
+          )}
+          
+          {/* 创建训练计划时的专门 UI */}
+          {isCreatingPlan && (
+            <div className="flex justify-start ml-6">
+              <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4 shadow-sm max-w-sm">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 bg-orange-500 rounded-full flex items-center justify-center animate-pulse">
+                    <Dumbbell className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <div className="font-medium text-orange-900">正在生成训练计划</div>
+                    <div className="text-sm text-orange-700">AI 正在为你设计个性化方案...</div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
