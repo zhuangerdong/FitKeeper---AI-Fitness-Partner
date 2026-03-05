@@ -52,23 +52,47 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 处理从其他页面跳转过来的初始消息
+  const hasProcessedInitialMessage = useRef(false);
+  const skipNextLoadMessages = useRef(false);
+  
   useEffect(() => {
     const state = location.state as { initialMessage?: string; createNewSession?: boolean } | null;
-    if (state?.initialMessage && !sending) {
+    
+    // 防止重复处理
+    if (hasProcessedInitialMessage.current) return;
+    
+    if (state?.initialMessage && user?.id) {
+      hasProcessedInitialMessage.current = true;
+      skipNextLoadMessages.current = true;  // 跳过下一次 loadSessionMessages
+      
+      // 先保存消息，再清除 state
+      const messageToSend = state.initialMessage;
+      const needNewSession = state.createNewSession;
+      
       // 清除 location state，避免重复发送
       navigate(location.pathname, { replace: true, state: null });
       
-      // 如果需要创建新 session
-      if (state.createNewSession) {
-        createNewSessionAndSend(state.initialMessage);
+      if (needNewSession) {
+        createNewSessionAndSend(messageToSend);
       } else if (currentSession) {
-        // 使用当前 session
         setTimeout(() => {
-          handleSend(state.initialMessage);
+          handleSend(messageToSend);
         }, 300);
       }
     }
-  }, [location.state]);
+  }, [location.state, user?.id]);
+  
+  // 加载会话的消息
+  useEffect(() => {
+    if (currentSession?.id) {
+      // 如果是新创建的 session 且我们要发送消息，跳过加载
+      if (skipNextLoadMessages.current) {
+        skipNextLoadMessages.current = false;
+        return;
+      }
+      loadSessionMessages(currentSession.id);
+    }
+  }, [currentSession?.id]);
   
   // 创建新 session 并发送消息
   const createNewSessionAndSend = async (message: string) => {
@@ -185,13 +209,6 @@ export default function Chat() {
       loadSessions();
     }
   }, [user?.id]);
-
-  // 加载会话的消息
-  useEffect(() => {
-    if (currentSession?.id) {
-      loadSessionMessages(currentSession.id);
-    }
-  }, [currentSession?.id]);
 
   const loadSessions = async () => {
     setLoading(true);
