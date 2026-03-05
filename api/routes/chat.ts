@@ -562,7 +562,6 @@ async function executeTool(name: string, args: Record<string, any>): Promise<any
       const { weight, height, age, gender, activity_level, goal } = params;
 
       // ========== Mifflin-St Jeor 公式 ==========
-      // BMR (基础代谢率) 计算
       let bmr = 10 * weight + 6.25 * height - 5 * age;
       if (gender === 'male') {
         bmr += 5;
@@ -570,58 +569,86 @@ async function executeTool(name: string, args: Record<string, any>): Promise<any
         bmr -= 161;
       }
 
-      // 活动系数
       const activityMultipliers: Record<string, number> = {
-        sedentary: 1.2,      // 久坐不动
-        light: 1.375,        // 轻度活动
-        moderate: 1.55,      // 中度活动
-        active: 1.725,       // 活跃
-        very_active: 1.9,    // 非常活跃
+        sedentary: 1.2,
+        light: 1.375,
+        moderate: 1.55,
+        active: 1.725,
+        very_active: 1.9,
       };
 
-      // TDEE (每日总能量消耗)
-      let tdee = bmr * activityMultipliers[activity_level];
+      const rawTdee = bmr * activityMultipliers[activity_level];
+      let targetCalories = rawTdee;
 
-      // 根据目标调整热量
       let calorieAdjustment = '';
       if (goal === 'lose_weight') {
-        tdee -= 400; // 温和减脂，每周约0.4kg
-        calorieAdjustment = '减脂期：热量 deficit 400 kcal';
+        // 减脂：TDEE × 0.8 (20% deficit)，约每周减 0.5kg
+        // 同时确保不低于 BMR，保证基础代谢需求
+        const deficitTdee = rawTdee * 0.80;
+        const minCalories = gender === 'male' ? Math.max(bmr, 1500) : Math.max(bmr, 1200);
+        targetCalories = Math.max(deficitTdee, minCalories);
+        const actualDeficit = Math.round(rawTdee - targetCalories);
+        calorieAdjustment = `减脂期：TDEE ${Math.round(rawTdee)} × 0.8，热量缺口 ${actualDeficit} kcal/天`;
       } else if (goal === 'gain_muscle') {
-        tdee += 250; // 温和增肌，减少脂肪堆积
-        calorieAdjustment = '增肌期：热量 surplus 250 kcal';
+        targetCalories = rawTdee + 250;
+        calorieAdjustment = '增肌期：热量盈余 250 kcal';
       } else {
-        calorieAdjustment = '维持期：保持当前热量';
+        calorieAdjustment = '维持期：保持 TDEE 热量';
       }
 
       // ========== 三大营养素计算 ==========
-      // 蛋白质：根据运动科学研究的合理范围
-      // 参考文献：Jäger et al. (2017) ISSN position stand
-      let proteinPerKg = 1.6; // 默认 1.6g/kg（研究支持的最低有效值）
+      // 基于科学研究：Helms et al. (2014), Jäger et al. (2017) ISSN position stand, Slater et al. (2019)
+      
+      // 1. 蛋白质：每公斤体重计算
+      // 减脂期需要更高蛋白保护肌肉 (Helms: 2.3-3.1 g/kg LBM ≈ 2.0-2.4 g/kg BW)
+      // 增肌期 1.6-2.2g/kg 足够 (Morton et al. 2018 meta-analysis: 1.6g/kg 达到最大效果)
+      let proteinPerKg: number;
       if (goal === 'lose_weight') {
-        proteinPerKg = 1.8; // 减脂期：1.8g/kg 保护肌肉（而非2.4）
+        proteinPerKg = 2.0; // 稍微降低，避免蛋白质占比过高
       } else if (goal === 'gain_muscle') {
-        proteinPerKg = 1.8; // 增肌期：1.8g/kg 已足够
+        proteinPerKg = 1.8;
+      } else {
+        proteinPerKg = 1.6;
       }
       const protein = Math.round(weight * proteinPerKg);
       const proteinCalories = protein * 4;
 
-      // 脂肪：占总热量的 25-30%（减脂期略低）
-      const fatRatio = goal === 'lose_weight' ? 0.25 : 0.28;
-      const fatCalories = tdee * fatRatio;
-      const fat = Math.round(fatCalories / 9);
+      // 2. 脂肪：占总热量 25-30%
+      // 研究表明低于 20% 会影响激素水平（特别是睾酮）
+      // Slater et al. (2019): 脂肪摄入 < 25% 热量可能影响运动员恢复
+      const fatRatio = goal === 'lose_weight' ? 0.25 : 0.30;
+      let fatCalories = targetCalories * fatRatio;
+      let fat = Math.round(fatCalories / 9);
+      
+      // 确保最低脂肪摄入 (至少 0.8g/kg，防止激素问题)
+      const minFat = Math.round(weight * 0.8);
+      if (fat < minFat) {
+        fat = minFat;
+        fatCalories = fat * 9;
+      }
 
-      // 碳水：剩余热量
-      const carbCalories = tdee - proteinCalories - fatCalories;
+      // 3. 碳水：剩余热量
+      // 碳水对训练表现至关重要，应优先保证
+      const carbCalories = Math.max(targetCalories - proteinCalories - fatCalories, 0);
       const carbs = Math.round(carbCalories / 4);
+      
+      // 计算实际比例用于展示
+      const proteinPct = Math.round((proteinCalories / targetCalories) * 100);
+      const fatPct = Math.round((fatCalories / targetCalories) * 100);
+      const carbPct = Math.round((carbCalories / targetCalories) * 100);
 
       const nutritionPlan = {
-        calories: Math.round(tdee),
+        calories: Math.round(targetCalories),
         protein,
         carbs,
         fat,
         bmr: Math.round(bmr),
-        tdee: Math.round(tdee / activityMultipliers[activity_level] * activityMultipliers[activity_level])
+        tdee: Math.round(rawTdee),
+        macros_breakdown: {
+          protein_pct: proteinPct,
+          fat_pct: fatPct,
+          carbs_pct: carbPct
+        }
       };
 
       // ========== 保存到数据库 ==========
@@ -654,8 +681,10 @@ async function executeTool(name: string, args: Record<string, any>): Promise<any
         calculation: {
           formula: 'Mifflin-St Jeor Equation',
           bmr: Math.round(bmr),
+          tdee_before_adjustment: Math.round(rawTdee),
           activity_multiplier: activityMultipliers[activity_level],
           adjustment: calorieAdjustment,
+          target_calories: Math.round(targetCalories),
           protein_per_kg: proteinPerKg,
         },
         plan: nutritionPlan,

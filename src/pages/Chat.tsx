@@ -58,6 +58,11 @@ export default function Chat() {
   useEffect(() => {
     const state = location.state as { initialMessage?: string; createNewSession?: boolean } | null;
     
+    // 如果有新的 initialMessage，重置 flag
+    if (state?.initialMessage) {
+      hasProcessedInitialMessage.current = false;
+    }
+    
     // 防止重复处理
     if (hasProcessedInitialMessage.current) return;
     
@@ -97,6 +102,9 @@ export default function Chat() {
   // 创建新 session 并发送消息
   const createNewSessionAndSend = async (message: string) => {
     try {
+      // 先清空当前消息，避免显示旧 session 的消息
+      setMessages([]);
+      
       const { data, error } = await supabase
         .from('chat_sessions')
         .insert({
@@ -122,7 +130,13 @@ export default function Chat() {
   
   // 使用指定 session 发送消息
   const sendMessageWithSession = async (text: string, sessionId: string) => {
-    if (!text || sending) return;
+    if (!text) return;
+    
+    // 如果正在发送，等待一下再重试
+    if (sending) {
+      setTimeout(() => sendMessageWithSession(text, sessionId), 100);
+      return;
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
