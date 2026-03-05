@@ -233,9 +233,9 @@ export default function Chat() {
     }
   };
 
-  // 加载会话列表（跳过咨询创建中的情况，避免覆盖 currentSession）
+  // 加载会话列表
   useEffect(() => {
-    if (user?.id && !isCreatingConsultation.current) {
+    if (user?.id) {
       loadSessions();
     }
   }, [user?.id]);
