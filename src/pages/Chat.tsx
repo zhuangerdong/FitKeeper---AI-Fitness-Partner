@@ -48,22 +48,55 @@ export default function Chat() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 处理从其他页面跳转过来的初始消息
   useEffect(() => {
-    const state = location.state as { initialMessage?: string } | null;
-    if (state?.initialMessage && currentSession && !sending) {
+    const state = location.state as { initialMessage?: string; createNewSession?: boolean } | null;
+    if (state?.initialMessage && !sending) {
       // 清除 location state，避免重复发送
       navigate(location.pathname, { replace: true, state: null });
-      // 自动发送初始消息
-      setTimeout(() => {
-        handleSend(state.initialMessage);
-      }, 500);
+      
+      // 如果需要创建新 session
+      if (state.createNewSession) {
+        createNewSessionAndSend(state.initialMessage);
+      } else if (currentSession) {
+        // 使用当前 session
+        setTimeout(() => {
+          handleSend(state.initialMessage);
+        }, 500);
+      }
     }
   }, [currentSession, location.state]);
+  
+  // 创建新 session 并发送消息
+  const createNewSessionAndSend = async (message: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('chat_sessions')
+        .insert({
+          user_id: user!.id,
+          title: message.slice(0, 20) + (message.length > 20 ? '...' : ''),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      // 添加到会话列表并设为当前
+      const newSession = { ...data, message_count: 0 };
+      setSessions(prev => [newSession, ...prev]);
+      setCurrentSession(newSession);
+      
+      // 等待 session 设置完成后发送消息
+      setTimeout(() => {
+        handleSend(message);
+      }, 100);
+    } catch (error) {
+      console.error('Error creating new session:', error);
+    }
+  };
 
   // 加载会话列表
   useEffect(() => {
@@ -256,17 +289,12 @@ export default function Chat() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setSending(true);
-    
-    // 检测是否是创建计划的最后确认步骤
-    const isConfirmation = text.includes('确认') || text.includes('好的') || text.includes('可以') || text.includes('没问题') || text.includes('开始吧') || text.includes('创建');
-    const hadPlanDiscussion = messages.some(m => 
-      m.text.includes('训练计划') || m.text.includes('分化') || m.text.includes('目标') || m.text.includes('训练经验')
-    );
-    if (isConfirmation && hadPlanDiscussion) {
-      setIsCreatingPlan(true);
-    }
 
     try {
+      // 设置超时（60秒）
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -277,12 +305,16 @@ export default function Chat() {
             content: m.text,
           })),
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
-      
-      // 重置创建计划状态
-      setIsCreatingPlan(false);
 
       if (data.reply) {
         const aiMessage: Message = {
@@ -317,14 +349,19 @@ export default function Chat() {
         // 重新加载会话列表以更新顺序
         loadSessions();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
-      setIsCreatingPlan(false);
+      let errorMessage = '抱歉，连接服务器出现问题，请稍后再试。';
+      
+      if (error.name === 'AbortError') {
+        errorMessage = '抱歉，请求超时了，请稍后再试。';
+      }
+      
       setMessages(prev => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
-          text: '抱歉，连接服务器出现问题，请稍后再试。',
+          text: errorMessage,
           sender: 'ai',
           timestamp: new Date(),
         },
@@ -501,26 +538,7 @@ export default function Chat() {
               <div className="bg-gray-100 text-gray-900 rounded-r-xl rounded-tl-xl p-3 shadow-sm flex items-center gap-2">
                 <Bot className="h-4 w-4 text-gray-500" />
                 <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
-                <span className="text-sm text-gray-500">
-                  {isCreatingPlan ? '正在生成训练计划...' : '正在思考...'}
-                </span>
-              </div>
-            </div>
-          )}
-          
-          {/* 创建训练计划时的专门 UI */}
-          {isCreatingPlan && (
-            <div className="flex justify-start ml-6">
-              <div className="bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-4 shadow-sm max-w-sm">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-orange-500 rounded-full flex items-center justify-center animate-pulse">
-                    <Dumbbell className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-orange-900">正在生成训练计划</div>
-                    <div className="text-sm text-orange-700">AI 正在为你设计个性化方案...</div>
-                  </div>
-                </div>
+                <span className="text-sm text-gray-500">正在思考...</span>
               </div>
             </div>
           )}
