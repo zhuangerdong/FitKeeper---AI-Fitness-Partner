@@ -12,3 +12,47 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Markdown 表格样式 */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  display: table;
+}
+
+.prose thead {
+  display: table-header-group;
+}
+
+.prose tbody {
+  display: table-row-group;
+}
+
+.prose tr {
+  display: table-row;
+}
+
+.prose th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  display: table-cell;
+}
+
+.prose td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  display: table-cell;
+}
+
+.prose tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.prose tbody tr:hover {
+  background-color: #f3f4f6;
+}
