@@ -88,12 +88,22 @@ export default function Workout() {
 
   // 开始咨询 - 跳转到 Chat 页面并创建新 session
   const startConsultation = () => {
-    navigate('/chat', { 
-      state: { 
+    // 如果已经在 Chat 页面，强制刷新页面
+    if (window.location.pathname === '/chat') {
+      // 保存状态到 sessionStorage，刷新后读取
+      sessionStorage.setItem('pendingConsultation', JSON.stringify({
         initialMessage: '我想创建一个训练计划',
         createNewSession: true
-      } 
-    });
+      }));
+      window.location.reload();
+    } else {
+      navigate('/chat', { 
+        state: { 
+          initialMessage: '我想创建一个训练计划',
+          createNewSession: true
+        } 
+      });
+    }
   };
 
   // 激活/停用计划
