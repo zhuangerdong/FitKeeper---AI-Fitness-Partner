@@ -105,8 +105,7 @@ export default function Chat() {
   // 加载会话的消息
   useEffect(() => {
     if (currentSession?.id) {
-      // 如果是新创建的 session 且我们要发送消息，跳过加载
-      if (skipNextLoadMessages.current) {
+      if (skipNextLoadMessages.current || isCreatingConsultation.current) {
         skipNextLoadMessages.current = false;
         return;
       }
@@ -118,6 +117,7 @@ export default function Chat() {
   const createNewSessionAndSend = async (message: string) => {
     try {
       setMessages([]);
+      setLoading(false);
       
       const { data, error } = await supabase
         .from('chat_sessions')
@@ -134,9 +134,7 @@ export default function Chat() {
       setSessions(prev => [newSession, ...prev]);
       setCurrentSession(newSession);
       
-      // New session is set, safe to allow loadSessions to proceed normally
-      isCreatingConsultation.current = false;
-      
+      // Flag stays true until AI responds — prevents loadSessions race
       sendMessageWithSession(message, data.id);
     } catch (error) {
       console.error('Error creating new session:', error);
@@ -208,11 +206,13 @@ export default function Chat() {
           response: data.reply,
         });
 
-        // 更新会话列表
+        // 咨询流程完成，允许 loadSessions 正常工作
+        isCreatingConsultation.current = false;
         loadSessions();
       }
     } catch (error: any) {
       console.error('Error:', error);
+      isCreatingConsultation.current = false;
       let errorMessage = '抱歉，连接服务器出现问题，请稍后再试。';
       
       if (error.name === 'AbortError') {
@@ -233,9 +233,9 @@ export default function Chat() {
     }
   };
 
-  // 加载会话列表
+  // 加载会话列表（跳过咨询创建中的情况，避免覆盖 currentSession）
   useEffect(() => {
-    if (user?.id) {
+    if (user?.id && !isCreatingConsultation.current) {
       loadSessions();
     }
   }, [user?.id]);
