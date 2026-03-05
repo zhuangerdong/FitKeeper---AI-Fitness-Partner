@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Send, User, Bot, Loader2, Plus, Trash2, MessageSquare, ChevronLeft, ChevronRight, Cloud } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
@@ -37,6 +38,8 @@ const quickQuestions = [
 
 export default function Chat() {
   const { user } = useAuthStore();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -45,6 +48,19 @@ export default function Chat() {
   const [sending, setSending] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 处理从其他页面跳转过来的初始消息
+  useEffect(() => {
+    const state = location.state as { initialMessage?: string } | null;
+    if (state?.initialMessage && currentSession && !sending) {
+      // 清除 location state，避免重复发送
+      navigate(location.pathname, { replace: true, state: null });
+      // 自动发送初始消息
+      setTimeout(() => {
+        handleSend(state.initialMessage);
+      }, 500);
+    }
+  }, [currentSession, location.state]);
 
   // 加载会话列表
   useEffect(() => {
