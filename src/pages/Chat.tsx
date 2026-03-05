@@ -65,10 +65,10 @@ export default function Chat() {
         // 使用当前 session
         setTimeout(() => {
           handleSend(state.initialMessage);
-        }, 500);
+        }, 300);
       }
     }
-  }, [currentSession, location.state]);
+  }, [location.state]);
   
   // 创建新 session 并发送消息
   const createNewSessionAndSend = async (message: string) => {
@@ -89,12 +89,93 @@ export default function Chat() {
       setSessions(prev => [newSession, ...prev]);
       setCurrentSession(newSession);
       
-      // 等待 session 设置完成后发送消息
-      setTimeout(() => {
-        handleSend(message);
-      }, 100);
+      // 直接发送消息，使用新的 session ID
+      sendMessageWithSession(message, data.id);
     } catch (error) {
       console.error('Error creating new session:', error);
+    }
+  };
+  
+  // 使用指定 session 发送消息
+  const sendMessageWithSession = async (text: string, sessionId: string) => {
+    if (!text || sending) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text,
+      sender: 'user',
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setSending(true);
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user?.id,
+          messages: [userMessage].map(m => ({
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            content: m.text,
+          })),
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.reply) {
+        const aiMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: data.reply,
+          sender: 'ai',
+          timestamp: new Date(),
+          createdPlanId: data.createdPlanId || null,
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
+
+        // 保存到数据库
+        await supabase.from('chat_history').insert({
+          user_id: user!.id,
+          session_id: sessionId,
+          message: userMessage.text,
+          response: data.reply,
+        });
+
+        // 更新会话列表
+        loadSessions();
+      }
+    } catch (error: any) {
+      console.error('Error:', error);
+      let errorMessage = '抱歉，连接服务器出现问题，请稍后再试。';
+      
+      if (error.name === 'AbortError') {
+        errorMessage = '抱歉，请求超时了，请稍后再试。';
+      }
+      
+      setMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          text: errorMessage,
+          sender: 'ai',
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
+      setSending(false);
     }
   };
 
