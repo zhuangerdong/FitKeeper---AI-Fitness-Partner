@@ -25,3 +25,14 @@ dist-ssr
 *.sln
 *.sw?
 .vite
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env.*
+!.env.example
