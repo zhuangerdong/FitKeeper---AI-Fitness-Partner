@@ -11,6 +11,13 @@ export default function Nutrition() {
   const [nutritionPlan, setNutritionPlan] = useState<any>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [missingInfo, setMissingInfo] = useState<string[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    height: '',
+    weight: '',
+    activity_level: '',
+    fitness_goal: ''
+  });
 
   useEffect(() => {
     if (user?.id) {
@@ -30,6 +37,12 @@ export default function Nutrition() {
     
     if (profile) {
       setUserProfile(profile);
+      setEditForm({
+        height: profile.height || '',
+        weight: profile.weight || '',
+        activity_level: profile.activity_level || '',
+        fitness_goal: profile.fitness_goal || ''
+      });
       
       // 检查缺少的信息
       const missing: string[] = [];
@@ -57,6 +70,29 @@ export default function Nutrition() {
     setLoading(false);
   };
 
+  const handleUpdateProfile = async () => {
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          height: Number(editForm.height),
+          weight: Number(editForm.weight),
+          activity_level: editForm.activity_level,
+          fitness_goal: editForm.fitness_goal,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user!.id);
+
+      if (error) throw error;
+      
+      setIsEditing(false);
+      await loadData(); // Reload data to refresh UI and missing info check
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('更新失败，请重试');
+    }
+  };
+
   // 调用 AI 计算营养计划
   const calculateWithAI = async () => {
     if (missingInfo.length > 0) {
@@ -66,12 +102,8 @@ export default function Nutrition() {
 
     setCalculating(true);
     try {
-      // 计算年龄
-      const birthDate = new Date(userProfile.birth_date);
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-
       // 调用 Chat API，让 AI 使用 calculate_nutrition_plan 工具
+      // 注意：现在工具会自动从数据库读取最新的用户资料，所以我们不需要在 prompt 中传递具体数值
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,15 +112,7 @@ export default function Nutrition() {
           messages: [
             {
               role: 'user',
-              content: `我的身体数据可能已更新：
-              身高：${userProfile.height}cm
-              体重：${userProfile.weight}kg
-              年龄：${getAge()}岁
-              性别：${userProfile.gender === 'male' ? '男' : '女'}
-              活动水平：${getActivityLabel(userProfile.activity_level)}
-              目标：${getGoalLabel(userProfile.fitness_goal)}
-              
-              请根据这些最新数据，重新计算并更新我的营养计划。`
+              content: '我已经更新了个人资料，请使用我最新的身体数据（身高、体重、目标等）重新计算并更新我的营养计划。'
             }
           ]
         }),
@@ -153,47 +177,125 @@ export default function Nutrition() {
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-medium text-gray-900">你的身体数据</h2>
-          <Link 
-            to="/profile" 
-            className="flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
-          >
-            <Edit2 className="h-4 w-4 mr-1" />
-            修改资料
-          </Link>
+          {!isEditing ? (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
+            >
+              <Edit2 className="h-4 w-4 mr-1" />
+              修改资料
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setIsEditing(false)}
+                className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+              >
+                取消
+              </button>
+              <button 
+                onClick={handleUpdateProfile}
+                className="text-sm text-orange-600 hover:text-orange-700 font-medium"
+              >
+                保存
+              </button>
+            </div>
+          )}
         </div>
         
         {userProfile ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900">{userProfile.weight || '--'}</div>
-              <div className="text-sm text-gray-500">体重</div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900">{userProfile.height || '--'}</div>
-              <div className="text-sm text-gray-500">身高</div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900">{getAge() || '--'}</div>
-              <div className="text-sm text-gray-500">年龄</div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-900">
-                {userProfile.gender === 'male' ? '男' : userProfile.gender === 'female' ? '女' : '--'}
-              </div>
-              <div className="text-sm text-gray-500">性别</div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg col-span-2">
-              <div className="text-lg font-bold text-gray-900">
-                {userProfile.activity_level ? getActivityLabel(userProfile.activity_level) : '--'}
-              </div>
-              <div className="text-sm text-gray-500">活动水平</div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg col-span-2">
-              <div className="text-lg font-bold text-gray-900">
-                {userProfile.fitness_goal ? getGoalLabel(userProfile.fitness_goal) : '--'}
-              </div>
-              <div className="text-sm text-gray-500">健身目标</div>
-            </div>
+            {isEditing ? (
+              <>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-gray-500 mb-1">体重 (kg)</div>
+                  <input
+                    type="number"
+                    value={editForm.weight}
+                    onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
+                    className="w-full text-xl font-bold text-gray-900 bg-transparent border-b border-orange-300 focus:outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-gray-500 mb-1">身高 (cm)</div>
+                  <input
+                    type="number"
+                    value={editForm.height}
+                    onChange={(e) => setEditForm({ ...editForm, height: e.target.value })}
+                    className="w-full text-xl font-bold text-gray-900 bg-transparent border-b border-orange-300 focus:outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-900">{getAge() || '--'}</div>
+                  <div className="text-sm text-gray-500">年龄</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {userProfile.gender === 'male' ? '男' : userProfile.gender === 'female' ? '女' : '--'}
+                  </div>
+                  <div className="text-sm text-gray-500">性别</div>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg col-span-2">
+                  <div className="text-sm text-gray-500 mb-1">活动水平</div>
+                  <select
+                    value={editForm.activity_level}
+                    onChange={(e) => setEditForm({ ...editForm, activity_level: e.target.value })}
+                    className="w-full text-md font-bold text-gray-900 bg-transparent border-b border-orange-300 focus:outline-none focus:border-orange-500"
+                  >
+                    <option value="sedentary">久坐不动</option>
+                    <option value="light">轻度活动</option>
+                    <option value="moderate">中度活动</option>
+                    <option value="active">活跃</option>
+                    <option value="very_active">非常活跃</option>
+                  </select>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg col-span-2">
+                  <div className="text-sm text-gray-500 mb-1">健身目标</div>
+                  <select
+                    value={editForm.fitness_goal}
+                    onChange={(e) => setEditForm({ ...editForm, fitness_goal: e.target.value })}
+                    className="w-full text-md font-bold text-gray-900 bg-transparent border-b border-orange-300 focus:outline-none focus:border-orange-500"
+                  >
+                    <option value="lose_weight">减脂</option>
+                    <option value="gain_muscle">增肌</option>
+                    <option value="maintain">维持</option>
+                  </select>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-900">{userProfile.weight || '--'}</div>
+                  <div className="text-sm text-gray-500">体重</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-900">{userProfile.height || '--'}</div>
+                  <div className="text-sm text-gray-500">身高</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-900">{getAge() || '--'}</div>
+                  <div className="text-sm text-gray-500">年龄</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-900">
+                    {userProfile.gender === 'male' ? '男' : userProfile.gender === 'female' ? '女' : '--'}
+                  </div>
+                  <div className="text-sm text-gray-500">性别</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg col-span-2">
+                  <div className="text-lg font-bold text-gray-900">
+                    {userProfile.activity_level ? getActivityLabel(userProfile.activity_level) : '--'}
+                  </div>
+                  <div className="text-sm text-gray-500">活动水平</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-lg col-span-2">
+                  <div className="text-lg font-bold text-gray-900">
+                    {userProfile.fitness_goal ? getGoalLabel(userProfile.fitness_goal) : '--'}
+                  </div>
+                  <div className="text-sm text-gray-500">健身目标</div>
+                </div>
+              </>
+            )}
           </div>
         ) : (
           <p className="text-gray-500">暂无身体数据</p>

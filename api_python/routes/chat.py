@@ -239,7 +239,7 @@ tools = [
     },
     {
         "name": "calculate_nutrition_plan",
-        "description": "根据用户的身体数据计算个性化的营养计划（热量和三大营养素）。使用 Mifflin-St Jeor 公式计算基础代谢率，然后根据活动水平和目标调整。计算结果会自动保存到数据库。",
+        "description": "根据用户的身体数据计算个性化的营养计划。会自动从数据库读取用户最新的个人资料（身高、体重、年龄、性别、活动水平、目标）进行计算。如果提供了参数，则优先使用参数值。",
         "input_schema": {
             "type": "object",
             "properties": {
@@ -251,7 +251,7 @@ tools = [
                 "activity_level": {"type": "string", "enum": ["sedentary", "light", "moderate", "active", "very_active"], "description": "活动水平"},
                 "goal": {"type": "string", "enum": ["lose_weight", "gain_muscle", "maintain"], "description": "健身目标"}
             },
-            "required": ["user_id", "weight", "height", "age", "gender", "activity_level", "goal"]
+            "required": ["user_id"]
         }
     },
     {
@@ -477,12 +477,39 @@ async def execute_tool(name: str, args: Dict[str, Any]) -> Any:
         return {"success": True, "message": f"已更新个人资料: {', '.join(updated)}", "data": data}
 
     elif name == "calculate_nutrition_plan":
-        weight = params["weight"]
-        height = params["height"]
-        age = params["age"]
-        gender = params["gender"]
-        activity_level = params["activity_level"]
-        goal = params["goal"]
+        # Fetch latest profile from DB
+        profile_response = supabase.table("users").select("*").eq("id", user_id).single().execute()
+        if not profile_response.data:
+            return {"error": "User profile not found. Please update profile first."}
+        
+        user_profile = profile_response.data
+        
+        # Use params if provided, else fallback to DB
+        weight = params.get("weight", user_profile.get("weight"))
+        height = params.get("height", user_profile.get("height"))
+        
+        # Calculate age if not provided but birth_date exists
+        age = params.get("age")
+        if age is None and user_profile.get("birth_date"):
+            birth_date = datetime.datetime.strptime(user_profile["birth_date"], "%Y-%m-%d")
+            today = datetime.date.today()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        
+        gender = params.get("gender", user_profile.get("gender"))
+        activity_level = params.get("activity_level", user_profile.get("activity_level"))
+        goal = params.get("goal", user_profile.get("fitness_goal"))
+
+        # Validate required fields
+        missing = []
+        if not weight: missing.append("weight")
+        if not height: missing.append("height")
+        if not age: missing.append("age")
+        if not gender: missing.append("gender")
+        if not activity_level: missing.append("activity_level")
+        if not goal: missing.append("goal")
+        
+        if missing:
+            return {"error": f"Missing required data: {', '.join(missing)}. Please update profile first."}
 
         # Mifflin-St Jeor Formula
         bmr = 10 * weight + 6.25 * height - 5 * age
