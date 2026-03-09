@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
-import { Loader2, Calculator, Sparkles, AlertCircle } from 'lucide-react';
+import { Loader2, Calculator, Sparkles, AlertCircle, Edit2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Nutrition() {
   const { user } = useAuthStore();
@@ -79,7 +80,15 @@ export default function Nutrition() {
           messages: [
             {
               role: 'user',
-              content: '请根据我的身体数据帮我计算个性化的营养计划，包括每日热量和三大营养素（蛋白质、碳水化合物、脂肪）的目标值。'
+              content: `我的身体数据可能已更新：
+              身高：${userProfile.height}cm
+              体重：${userProfile.weight}kg
+              年龄：${getAge()}岁
+              性别：${userProfile.gender === 'male' ? '男' : '女'}
+              活动水平：${getActivityLabel(userProfile.activity_level)}
+              目标：${getGoalLabel(userProfile.fitness_goal)}
+              
+              请根据这些最新数据，重新计算并更新我的营养计划。`
             }
           ]
         }),
@@ -142,7 +151,16 @@ export default function Nutrition() {
 
       {/* 用户信息卡片 */}
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">你的身体数据</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-medium text-gray-900">你的身体数据</h2>
+          <Link 
+            to="/profile" 
+            className="flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
+          >
+            <Edit2 className="h-4 w-4 mr-1" />
+            修改资料
+          </Link>
+        </div>
         
         {userProfile ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -187,7 +205,7 @@ export default function Nutrition() {
             <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm text-yellow-800">
-                请先在 <a href="/profile" className="underline font-medium">个人资料</a> 页面完善以下信息：
+                请先在 <Link to="/profile" className="underline font-medium">个人资料</Link> 页面完善以下信息：
                 <span className="font-medium">{missingInfo.join('、')}</span>
               </p>
             </div>
@@ -204,12 +222,12 @@ export default function Nutrition() {
             {calculating ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
-                AI 正在计算...
+                AI 正在重新计算...
               </>
             ) : (
               <>
                 <Sparkles className="h-5 w-5" />
-                让 AI 计算我的营养计划
+                {nutritionPlan ? '根据最新数据重新计算' : '让 AI 计算我的营养计划'}
               </>
             )}
           </button>
