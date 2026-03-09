@@ -180,9 +180,9 @@ export default function Nutrition() {
           {!isEditing ? (
             <button 
               onClick={() => setIsEditing(true)}
-              className="flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
+              className="flex items-center px-3 py-1.5 text-sm font-medium text-orange-600 bg-orange-50 hover:bg-orange-100 rounded-md transition-colors"
             >
-              <Edit2 className="h-4 w-4 mr-1" />
+              <Edit2 className="h-4 w-4 mr-1.5" />
               修改资料
             </button>
           ) : (

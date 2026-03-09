@@ -107,7 +107,7 @@
       "light_work": { "percentage": "15-20%", "reps": "15-20", "purpose": "代谢压力和恢复" }
     },
     "exercise_specific": {
-      "squat_deadlift": { "recommended_reps": "3-8（有经验）", "5-10（新手）" },
+      "squat_deadlift": { "recommended_reps": "3-8（有经验），5-10（新手）" },
       "bench_press": { "recommended_reps": "5-10" },
       "rows": { "recommended_reps": "8-15" },
       "pull_ups": { "recommended_reps": "5-10" },
