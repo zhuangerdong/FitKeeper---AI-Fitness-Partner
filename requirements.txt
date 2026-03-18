@@ -5,3 +5,7 @@ supabase
 anthropic
 pydantic
 python-multipart
+sentence-transformers
+rank-bm25
+numpy
+scikit-learn
