@@ -5,7 +5,5 @@ supabase
 anthropic
 pydantic
 python-multipart
-sentence-transformers; sys_platform != 'linux'
 rank-bm25
 numpy
-scikit-learn
