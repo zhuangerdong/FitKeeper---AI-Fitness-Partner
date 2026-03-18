@@ -230,7 +230,9 @@ export default function Chat() {
                   );
                 } else if (data.type === 'tool_start') {
                   const toolNames: Record<string, string> = {
-                    'search_knowledge_base': '正在查询知识库...',
+                    'get_training_guidelines': '正在查询训练指南...',
+                    'get_scientific_training_knowledge': '正在查阅科学文献...',
+                    'query_exercise_db': '正在搜索动作库...',
                     'get_user_profile': '正在读取个人资料...',
                     'create_workout_plan': '正在生成训练计划...',
                     'calculate_nutrition_plan': '正在计算营养方案...',

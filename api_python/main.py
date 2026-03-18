@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from .routes import auth, chat
 import os
 from dotenv import load_dotenv
@@ -9,14 +8,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
-
-# Initialize RAG engine on startup
-@app.on_event("startup")
-async def startup_event():
-    print("Initializing Hybrid Search Engine (RAG)... This may take a moment on first run to download the model.")
-    from .rag_system import get_search_engine
-    get_search_engine()
-    print("Hybrid Search Engine ready.")
 
 # CORS configuration
 origins = [

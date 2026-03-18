@@ -5,4 +5,3 @@ supabase
 anthropic
 pydantic
 python-multipart
-rank-bm25
