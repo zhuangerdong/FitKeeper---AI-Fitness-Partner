@@ -6,4 +6,3 @@ anthropic
 pydantic
 python-multipart
 rank-bm25
-numpy

@@ -2,7 +2,6 @@ import json
 import os
 import re
 from typing import List, Dict, Any
-import numpy as np
 
 # Use standard requests for API calls to keep dependencies light
 try:
@@ -107,11 +106,8 @@ class HybridSearchEngine:
         embeddings = [doc.embedding for doc in self.documents if doc.embedding]
         if embeddings and len(embeddings) == len(self.documents):
             print("Building Vector index...")
-            self.embeddings_matrix = np.array(embeddings)
-            # Normalize for cosine similarity
-            norms = np.linalg.norm(self.embeddings_matrix, axis=1, keepdims=True)
-            norms[norms == 0] = 1e-10
-            self.embeddings_matrix = self.embeddings_matrix / norms
+            # Use pure python list for embeddings to avoid numpy dependency
+            self.embeddings_matrix = embeddings
         else:
             print("Vector index skipped (missing embeddings). Hybrid search will degrade to Keyword search.")
 
@@ -135,51 +131,74 @@ class HybridSearchEngine:
             print(f"Embedding API error: {e}")
         return None
 
+    def _cosine_similarity(self, vec1: List[float], vec2: List[float]) -> float:
+        """Calculate cosine similarity without numpy"""
+        if not vec1 or not vec2: return 0.0
+        
+        dot_product = sum(a * b for a, b in zip(vec1, vec2))
+        norm_a = sum(a * a for a in vec1) ** 0.5
+        norm_b = sum(b * b for b in vec2) ** 0.5
+        
+        if norm_a == 0 or norm_b == 0: return 0.0
+        return dot_product / (norm_a * norm_b)
+
     def search(self, query: str, top_k: int = 5, alpha: float = 0.5) -> List[Dict]:
         if not self.documents: return []
         
-        scores = np.zeros(len(self.documents))
+        # Initialize scores
+        doc_count = len(self.documents)
+        final_scores = [0.0] * doc_count
         
-        # 1. Vector Search
+        # 1. Vector Search (Manual calculation without numpy)
         if self.embeddings_matrix is not None:
             query_vec = self._get_query_embedding(query)
             if query_vec:
-                q_vec = np.array(query_vec)
-                q_norm = np.linalg.norm(q_vec)
-                if q_norm > 0: q_vec = q_vec / q_norm
+                vector_scores = []
+                for doc_emb in self.embeddings_matrix:
+                    score = self._cosine_similarity(doc_emb, query_vec)
+                    vector_scores.append(score)
                 
-                vector_scores = np.dot(self.embeddings_matrix, q_vec)
                 # Normalize 0-1
-                v_min, v_max = np.min(vector_scores), np.max(vector_scores)
-                if v_max > v_min:
-                    vector_scores = (vector_scores - v_min) / (v_max - v_min)
-                
-                scores += alpha * vector_scores
+                if vector_scores:
+                    v_min = min(vector_scores)
+                    v_max = max(vector_scores)
+                    v_range = v_max - v_min if v_max > v_min else 1.0
+                    
+                    for i in range(doc_count):
+                        normalized_score = (vector_scores[i] - v_min) / v_range if v_max > v_min else 0
+                        final_scores[i] += alpha * normalized_score
         
         # 2. BM25 Search
         if self.bm25:
             tokenized_query = self._tokenize(query)
             bm25_scores = self.bm25.get_scores(tokenized_query)
+            
             # Normalize 0-1
-            b_min, b_max = np.min(bm25_scores), np.max(bm25_scores)
-            if b_max > b_min:
-                bm25_scores = (bm25_scores - b_min) / (b_max - b_min)
+            if len(bm25_scores) > 0:
+                b_min = min(bm25_scores)
+                b_max = max(bm25_scores)
+                b_range = b_max - b_min if b_max > b_min else 1.0
+                
+                # If vector search failed/disabled, use 100% BM25
+                weight = (1 - alpha) if self.embeddings_matrix is not None else 1.0
+                
+                for i in range(doc_count):
+                    normalized_score = (bm25_scores[i] - b_min) / b_range if b_max > b_min else 0
+                    final_scores[i] += weight * normalized_score
             
-            # If vector search failed/disabled, use 100% BM25
-            weight = (1 - alpha) if self.embeddings_matrix is not None else 1.0
-            scores += weight * bm25_scores
-            
-        # Get Top K
-        top_indices = np.argsort(scores)[::-1][:top_k]
+        # Get Top K manually
+        indexed_scores = list(enumerate(final_scores))
+        indexed_scores.sort(key=lambda x: x[1], reverse=True)
+        top_indices = [idx for idx, score in indexed_scores[:top_k]]
         
         results = []
         for idx in top_indices:
-            if scores[idx] > 0: # Filter zero relevance
+            if final_scores[idx] > 0: # Filter zero relevance
                 doc = self.documents[idx]
                 results.append({
                     "content": doc.content,
                     "metadata": doc.metadata,
-                    "score": float(scores[idx])
+                    "score": float(final_scores[idx])
                 })
             
         return results
