@@ -1,10 +1,17 @@
 import json
 import os
-import numpy as np
-from sentence_transformers import SentenceTransformer
-from rank_bm25 import BM25Okapi
 import re
 from typing import List, Dict, Any
+import numpy as np
+
+# Conditional imports for local environment only
+try:
+    from sentence_transformers import SentenceTransformer
+    from rank_bm25 import BM25Okapi
+    LOCAL_RAG_AVAILABLE = True
+except ImportError:
+    LOCAL_RAG_AVAILABLE = False
+    print("Warning: RAG dependencies not found. Search will be disabled in this environment.")
 
 class Document:
     def __init__(self, id: str, content: str, metadata: Dict[str, Any]):
@@ -15,6 +22,11 @@ class Document:
 class HybridSearchEngine:
     def __init__(self, model_name="all-MiniLM-L6-v2"):
         self.documents: List[Document] = []
+        
+        if not LOCAL_RAG_AVAILABLE:
+            print("RAG Engine disabled: Missing dependencies (sentence-transformers/rank-bm25)")
+            return
+
         self.model = SentenceTransformer(model_name)
         self.embeddings = None
         self.bm25 = None
@@ -23,6 +35,8 @@ class HybridSearchEngine:
         self._build_indexes()
         
     def load_and_chunk_data(self):
+        if not LOCAL_RAG_AVAILABLE: return
+
         # Load scientific knowledge
         try:
             with open('data/scientific_training_knowledge.json', 'r', encoding='utf-8') as f:
@@ -76,7 +90,7 @@ class HybridSearchEngine:
         return re.findall(r'[\u4e00-\u9fa5]+|[a-zA-Z0-9]+', text)
 
     def _build_indexes(self):
-        if not self.documents:
+        if not LOCAL_RAG_AVAILABLE or not self.documents:
             print("No documents loaded for hybrid search.")
             return
             
@@ -95,6 +109,9 @@ class HybridSearchEngine:
         Hybrid search combining Vector and BM25 scores.
         alpha: weight for vector search. (1 - alpha) is for keyword search.
         """
+        if not LOCAL_RAG_AVAILABLE:
+            return [{"content": "Error: Search is not available in this environment (missing dependencies).", "metadata": {}, "score": 0.0}]
+
         if not self.documents:
             return []
             
