@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import os
 import json
 from supabase import create_client, Client
-from anthropic import Anthropic
+from anthropic import AsyncAnthropic
 import datetime
 from dotenv import load_dotenv
 
@@ -21,32 +22,20 @@ if not supabase_url or not supabase_key:
 
 supabase: Client = create_client(supabase_url, supabase_key)
 
-# Initialize Anthropic client
+# Initialize Async Anthropic client
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
 anthropic_base_url = os.getenv("ANTHROPIC_BASE_URL")
 
 if not anthropic_api_key:
     raise ValueError("Anthropic API key not found in environment variables")
 
-anthropic = Anthropic(
+anthropic = AsyncAnthropic(
     api_key=anthropic_api_key,
     base_url=anthropic_base_url
 )
 
 # Load Knowledge Bases
-try:
-    with open('data/fitness_knowledge_base.json', 'r', encoding='utf-8') as f:
-        fitness_kb = json.load(f)
-except Exception as e:
-    print(f"Warning: Could not load fitness knowledge base: {e}")
-    fitness_kb = {}
-
-try:
-    with open('data/scientific_training_knowledge.json', 'r', encoding='utf-8') as f:
-        scientific_kb = json.load(f)
-except Exception as e:
-    print(f"Warning: Could not load scientific training knowledge base: {e}")
-    scientific_kb = {}
+# Note: RAG engine initialization is handled lazily in rag_system.py
 
 # Pydantic models for request body
 class ChatMessage(BaseModel):
@@ -255,50 +244,26 @@ tools = [
         }
     },
     {
-        "name": "get_training_guidelines",
-        "description": "获取基础训练原则和指南（分化方案、训练量标准、组次范围、渐进超负荷、恢复建议等）。在设计训练计划或回答训练相关问题时调用。",
-        "input_schema": {
-            "type": "object",
-            "properties": {},
-            "required": []
-        }
-    },
-    {
-        "name": "get_scientific_training_knowledge",
-        "description": "获取科学训练知识库，包含周期化训练、SRA曲线、容量指南、次数范围研究、渐进超负荷方法等科学依据。设计训练计划时必须调用此工具获取最新研究支持的训练参数。",
+        "name": "search_knowledge_base",
+        "description": "通过语义搜索查询健身知识库。包含科学训练原理（周期化、容量、恢复等）和具体动作库。当你需要回答健身专业问题或寻找特定肌群的动作时，必须调用此工具。",
         "input_schema": {
             "type": "object",
             "properties": {
-                "topic": {
+                "query": {
                     "type": "string",
-                    "enum": ["periodization", "volume_guidelines", "rep_ranges", "sra_curve", "progressive_overload", "deload", "session_structure", "split_recommendations", "goal_specific_programming", "all"],
-                    "description": "要获取的知识主题，默认获取全部"
-                }
-            },
-            "required": []
-        }
-    },
-    {
-        "name": "query_exercise_db",
-        "description": "从动作数据库中按肌群和器材查询推荐动作。可一次查询多个肌群。",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "muscles": {
-                    "type": "array",
-                    "items": {"type": "string", "enum": ["chest", "lats", "middle back", "lower back", "traps", "shoulders", "biceps", "triceps", "forearms", "quadriceps", "hamstrings", "glutes", "calves", "abdominals", "abductors", "adductors", "neck"]},
-                    "description": "要查询的肌群列表"
+                    "description": "自然语言搜索词，例如 '如何进行减脂期的力量训练' 或 '胸肌哑铃动作推荐'"
                 },
-                "equipment": {
-                    "type": "string",
-                    "enum": ["gym", "dumbbell", "bodyweight"],
-                    "description": "器材类型"
+                "top_k": {
+                    "type": "number",
+                    "description": "返回的最多结果数量，默认 5"
                 }
             },
-            "required": ["muscles"]
+            "required": ["query"]
         }
     }
 ]
+
+from ..rag_system import get_search_engine
 
 async def execute_tool(name: str, args: Dict[str, Any]) -> Any:
     user_id = args.get("user_id")
@@ -608,39 +573,22 @@ async def execute_tool(name: str, args: Dict[str, Any]) -> Any:
             "data": response.data[0] if response.data else {}
         }
 
-    elif name == "get_training_guidelines":
-        return fitness_kb.get("training_principles", {})
-
-    elif name == "get_scientific_training_knowledge":
-        topic = params.get("topic", "all")
-        if topic == "all":
-            return scientific_kb
-        return scientific_kb.get(topic, {"error": f"Topic '{topic}' not found"})
-
-    elif name == "query_exercise_db":
-        muscles = params.get("muscles", [])
-        equipment = params.get("equipment")
-        db = fitness_kb.get("curated_exercises_by_muscle_and_equipment", {})
-        results = {}
-        
-        for muscle in muscles:
-            if muscle not in db: continue
-            if equipment and equipment in db[muscle]:
-                results[muscle] = db[muscle][equipment]
-            else:
-                results[muscle] = db[muscle]
-        return results
+    elif name == "search_knowledge_base":
+        query = params.get("query", "")
+        top_k = params.get("top_k", 5)
+        engine = get_search_engine()
+        results = engine.search(query, top_k=top_k)
+        return {"results": results}
 
     return {"error": f"Unknown tool: {name}"}
 
 
 @router.post("/")
 async def chat_handler(request: ChatRequest):
-    try:
-        messages = request.messages
-        user_id = request.user_id
+    messages = request.messages
+    user_id = request.user_id
 
-        system_prompt = f"""你是 FitKeeper 的 AI 健身助手，一个基于科学研究的私人教练和营养师。
+    system_prompt = f"""你是 FitKeeper 的 AI 健身助手，一个基于科学研究的私人教练和营养师。
 
 ## 你的能力
 你可以通过工具访问和修改用户的数据：
@@ -648,6 +596,7 @@ async def chat_handler(request: ChatRequest):
 - 记录体重、更新营养计划
 - **更新用户个人资料**（身高、体重、性别、出生日期、活动水平、健身目标）
 - **创建训练计划**（基于科学研究的个性化训练计划）
+- **查询知识库**：通过 search_knowledge_base 工具搜索动作库（如胸肌动作推荐）、科学训练原理（容量、周期化等）。设计训练计划前，强烈建议先查询相关科学指南和动作库。
 
 ## 沟通风格
 - 友好、专业、鼓励性
@@ -666,14 +615,6 @@ async def chat_handler(request: ChatRequest):
 3. **时间安排**：每周能训练几天？每次大概多长时间？
 4. **器材条件**：你有健身房吗？家里有哑铃？还是只能徒手？
 
-**第一轮回复示例：**
-"好的！我来帮你制定一个科学的训练计划 🏋️ 先了解一些基本情况：
-
-1. 你之前有系统的训练经历吗？练了多久呢？
-2. 你的主要目标是什么？（增肌/减脂/提升力量/综合体能？）
-3. 每周能安排几天训练？每次大概多长时间？
-4. 你有健身房可以用，还是家里练？有什么器材？"
-
 ### 第二轮：深入需求（根据用户回答追问）
 等用户回答后，根据情况追问：
 - 减脂目标：体脂大概多少？有做过体测吗？饮食控制如何？
@@ -689,46 +630,14 @@ async def chat_handler(request: ChatRequest):
 ### 第四轮：确认后调用工具创建
 **只有**当你收集完所有必要信息并得到用户确认后，才能调用 create_workout_plan 工具！
 
-**错误示例（禁止）：**
-用户："我想创建训练计划"
-AI："好的，我帮你创建一个计划..." ❌ 直接跳过咨询
-
-**正确示例：**
-用户："我想创建训练计划"
-AI："好的！先了解一下你的情况..." ✅ 开始第一轮咨询
-用户：回答问题
-AI：追问更多细节 ✅ 第二轮咨询
-...
-AI："根据你的情况，我建议..."然后调用工具 ✅ 收集完毕后创建
-
 ## ========== 科学训练计划创建流程 ==========
 
-创建训练计划时，必须严格遵循以下科学原则：
-
-### 确定基础参数（基于研究）
-
-**训练容量（每周每肌群组数）- meta-analysis研究支持：**
-- 新手：10-12 组/肌群/周
-- 中级：12-16 组/肌群/周  
-- 高级：16-20 组/肌群/周
-- 最大有效上限：20-25 组/肌群/周
-
-**分化方案选择：**
-- 2天/周：全身A + 全身B（新手最佳）
-- 3天/周：全身A/B/C 或 推/拉/腿
-- 4天/周：上肢/下肢 × 2（最均衡）
-- 5天/周：推/拉/腿/上肢/下肢
-- 6天/周：推/拉/腿 × 2（高级）
-
-**次数范围（研究显示差异约10-15%）：**
-- 增肌：6-12次（主），配合1-5次和15-20次
-- 力量：1-5次（主），配合6-10次
-- 每次训练：60-70%在最佳范围，15-20%低次数，15-20%高次数
-
-**周期化选择：**
-- 新手：线性周期化（每周增加重量）
-- 有经验者：每日波动周期化（DUP）效果更好约28%
-- 中周期长度：4-6周后减载一周
+创建训练计划时，必须严格遵循科学原则。你可以通过 `search_knowledge_base` 工具搜索以下关键词获取最新研究支持：
+- "训练容量 guidelines" (获取不同水平的组数建议)
+- "分化方案 split" (获取不同天数的分化建议)
+- "次数范围 reps" (获取增肌/力量的最佳次数)
+- "周期化 periodization" (获取线性/波动周期化建议)
+- "动作推荐 [部位]" (获取具体肌群的动作)
 
 ## 重要：主动记录用户信息
 当用户在对话中提到以下任何信息时，你必须**立即调用 update_user_profile 工具**保存：
@@ -748,100 +657,127 @@ AI："根据你的情况，我建议..."然后调用工具 ✅ 收集完毕后�
 用户ID: {user_id}
 当前日期: {datetime.date.today().strftime('%Y-%m-%d')}"""
 
-        conversation_messages = []
-        for msg in messages:
-            if msg.role != "system":
-                conversation_messages.append({
-                    "role": "assistant" if msg.role == "assistant" else "user",
-                    "content": msg.content
-                })
-
-        # Initial API call
-        response = anthropic.messages.create(
-            model=os.getenv("ANTHROPIC_MODEL", "qwen3.5-plus"), # Default model if env var missing
-            max_tokens=4096,
-            system=system_prompt,
-            tools=tools,
-            messages=conversation_messages
-        )
-
-        rounds = 0
-        while rounds < 5:
-            has_tool_use = False
-            tool_results = []
-
-            for block in response.content:
-                if block.type == 'tool_use':
-                    has_tool_use = True
-                    tool_name = block.name
-                    tool_args = block.input
-                    
-                    print(f"Tool call [round {rounds + 1}]: {tool_name}", tool_args)
-                    
-                    # Inject user_id into tool args
-                    tool_args["user_id"] = user_id
-                    
-                    result = await execute_tool(tool_name, tool_args)
-                    
-                    tool_results.append({
-                        "type": "tool_result",
-                        "tool_use_id": block.id,
-                        "content": json.dumps(result, default=str) # Handle datetime serialization
-                    })
-
-            if not has_tool_use:
-                break
-
+    # Context Pruning: keep recent 10 messages to save tokens and improve speed
+    conversation_messages = []
+    for msg in messages:
+        if msg.role != "system":
             conversation_messages.append({
-                "role": "assistant",
-                "content": response.content
+                "role": "assistant" if msg.role == "assistant" else "user",
+                "content": msg.content
             })
-            conversation_messages.append({
-                "role": "user",
-                "content": tool_results
-            })
-
-            response = anthropic.messages.create(
-                model=os.getenv("ANTHROPIC_MODEL", "qwen3.5-plus"),
-                max_tokens=4096,
-                system=system_prompt,
-                tools=tools,
-                messages=conversation_messages
-            )
             
+    if len(conversation_messages) > 12:
+        # Keep first 2 (context) and last 10
+        conversation_messages = conversation_messages[:2] + conversation_messages[-10:]
+
+    async def generate_stream():
+        nonlocal conversation_messages
+        rounds = 0
+        max_rounds = 5
+        
+        while rounds < max_rounds:
             rounds += 1
-
-        # Extract reply and plan_id
-        reply = ""
-        created_plan_id = None
-        
-        for block in response.content:
-            if block.type == 'text':
-                reply += block.text
-
-        # Check for created plan in history
-        # Simple check in tool results of last turn or search through history
-        # Since we just executed tools, we can check if create_workout_plan was called successfully
-        # But let's follow the TS logic and check conversationMessages if needed, or just rely on the tool execution we just did.
-        # Actually, in the loop we appended tool results. Let's check the last user message with tool results if it contains a plan_id
-        
-        # A more robust way: Scan conversation_messages for tool_result from create_workout_plan
-        for msg in conversation_messages:
-            if msg["role"] == "user" and isinstance(msg["content"], list):
-                for item in msg["content"]:
-                    if item.get("type") == "tool_result":
+            has_tool_use = False
+            
+            try:
+                # We use stream=True for raw event streaming
+                stream = await anthropic.messages.create(
+                    model=os.getenv("ANTHROPIC_MODEL", "qwen3.5-plus"),
+                    max_tokens=4096,
+                    system=system_prompt,
+                    tools=tools,
+                    messages=conversation_messages,
+                    stream=True
+                )
+                
+                assistant_blocks = []
+                current_block_index = -1
+                
+                tool_use_id = None
+                tool_name = None
+                tool_input_json = ""
+                
+                async for event in stream:
+                    if event.type == "content_block_start":
+                        if event.content_block.type == "text":
+                            assistant_blocks.append({"type": "text", "text": ""})
+                        elif event.content_block.type == "tool_use":
+                            has_tool_use = True
+                            tool_use_id = event.content_block.id
+                            tool_name = event.content_block.name
+                            tool_input_json = ""
+                            assistant_blocks.append({"type": "tool_use", "id": tool_use_id, "name": tool_name, "input": {}})
+                            
+                            yield f"data: {json.dumps({'type': 'tool_start', 'name': tool_name})}\n\n"
+                            
+                    elif event.type == "content_block_delta":
+                        # We use the last added block
+                        if not assistant_blocks: continue
+                        last_block = assistant_blocks[-1]
+                        
+                        if event.delta.type == "text_delta" and last_block["type"] == "text":
+                            last_block["text"] += event.delta.text
+                            yield f"data: {json.dumps({'type': 'text', 'content': event.delta.text})}\n\n"
+                        elif event.delta.type == "input_json_delta" and last_block["type"] == "tool_use":
+                            tool_input_json += event.delta.partial_json
+                            
+                    elif event.type == "content_block_stop":
+                        if not assistant_blocks: continue
+                        last_block = assistant_blocks[-1]
+                        
+                        if has_tool_use and last_block["type"] == "tool_use":
+                            try:
+                                args = json.loads(tool_input_json)
+                                last_block["input"] = args
+                            except json.JSONDecodeError:
+                                args = {}
+                                last_block["input"] = args
+                
+                # Append assistant message to history
+                conversation_messages.append({
+                    "role": "assistant",
+                    "content": assistant_blocks
+                })
+                
+                if has_tool_use:
+                    # Execute tool
+                    last_tool_block = next((b for b in reversed(assistant_blocks) if b["type"] == "tool_use"), None)
+                    if last_tool_block:
+                        tool_args = last_tool_block["input"]
+                        tool_args["user_id"] = user_id
+                        
                         try:
-                            res_content = json.loads(item["content"])
-                            if res_content.get("success") and res_content.get("plan_id"):
-                                created_plan_id = res_content.get("plan_id")
-                        except:
-                            pass
+                            result = await execute_tool(tool_name, tool_args)
+                            
+                            # Special handling to notify frontend of created plan
+                            if tool_name == "create_workout_plan" and isinstance(result, dict) and result.get("success"):
+                                yield f"data: {json.dumps({'type': 'plan_created', 'plan_id': result.get('plan_id')})}\n\n"
+                                
+                        except Exception as e:
+                            # Self-Correction: pass error back to model
+                            result = {"error": f"Tool execution failed: {str(e)}. Please correct the arguments and try again."}
+                            
+                        # Yield tool end to frontend
+                        yield f"data: {json.dumps({'type': 'tool_end', 'name': tool_name})}\n\n"
+                        
+                        # Append tool result to history and loop again
+                        conversation_messages.append({
+                            "role": "user",
+                            "content": [{
+                                "type": "tool_result",
+                                "tool_use_id": tool_use_id,
+                                "content": json.dumps(result, default=str)
+                            }]
+                        })
+                else:
+                    # No tool use, generation finished
+                    break
+                    
+            except Exception as e:
+                print(f"Agent error in stream: {e}")
+                yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+                break
+                
+        yield "data: [DONE]\n\n"
 
-        return {
-            "reply": reply,
-            "createdPlanId": created_plan_id
-        }
-
-    except Exception as e:
-        print(f"Agent error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    return StreamingResponse(generate_stream(), media_type="text/event-stream")

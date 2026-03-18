@@ -48,6 +48,7 @@ export default function Chat() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [toolStatus, setToolStatus] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -185,31 +186,90 @@ export default function Chat() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder('utf-8');
+      
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: '',
+        sender: 'ai',
+        timestamp: new Date(),
+        createdPlanId: null,
+      };
 
-      if (data.reply) {
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: data.reply,
-          sender: 'ai',
-          timestamp: new Date(),
-          createdPlanId: data.createdPlanId || null,
-        };
+      setMessages(prev => [...prev, aiMessage]);
+      // setSending(false); removed to keep loading state during stream
 
-        setMessages(prev => [...prev, aiMessage]);
+      let finalReplyText = '';
+      let createdPlanId = null;
 
-        // 保存到数据库
-        await supabase.from('chat_history').insert({
-          user_id: user!.id,
-          session_id: sessionId,
-          message: userMessage.text,
-          response: data.reply,
-        });
+      let buffer = '';
 
-        // 咨询流程完成，允许 loadSessions 正常工作
-        isCreatingConsultation.current = false;
-        loadSessions();
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          
+          // Keep the last partial line in the buffer
+          buffer = lines.pop() || '';
+          
+          for (const line of lines) {
+            if (line.trim() === '') continue;
+            if (line.startsWith('data: ') && !line.startsWith('data: [DONE]')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                
+                if (data.type === 'text') {
+                  finalReplyText += data.content;
+                  setMessages(prev => 
+                    prev.map(m => m.id === aiMessage.id ? { ...m, text: finalReplyText } : m)
+                  );
+                } else if (data.type === 'tool_start') {
+                  const toolNames: Record<string, string> = {
+                    'search_knowledge_base': '正在查询知识库...',
+                    'get_user_profile': '正在读取个人资料...',
+                    'create_workout_plan': '正在生成训练计划...',
+                    'calculate_nutrition_plan': '正在计算营养方案...',
+                    'update_user_profile': '正在更新个人资料...',
+                    'log_weight': '正在记录体重...',
+                    'get_workout_plans': '正在获取训练计划...',
+                    'get_nutrition_plan': '正在获取营养计划...',
+                    'get_body_data': '正在获取身体数据...'
+                  };
+                  setToolStatus(toolNames[data.name] || `正在调用工具: ${data.name}...`);
+                  console.log(`Tool started: ${data.name}`);
+                } else if (data.type === 'tool_end') {
+                  setToolStatus(null);
+                } else if (data.type === 'plan_created') {
+                  createdPlanId = data.plan_id;
+                  setMessages(prev => 
+                    prev.map(m => m.id === aiMessage.id ? { ...m, createdPlanId } : m)
+                  );
+                }
+              } catch (e) {
+                console.error("Error parsing stream chunk", e, line);
+              }
+            }
+          }
+        }
       }
+
+      // 保存到数据库
+      await supabase.from('chat_history').insert({
+        user_id: user!.id,
+        session_id: sessionId,
+        message: userMessage.text,
+        response: finalReplyText,
+      });
+
+      // 咨询流程完成，允许 loadSessions 正常工作
+      isCreatingConsultation.current = false;
+      loadSessions();
+
     } catch (error: any) {
       console.error('Error:', error);
       isCreatingConsultation.current = false;
@@ -442,41 +502,99 @@ export default function Chat() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder('utf-8');
+      
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: '',
+        sender: 'ai',
+        timestamp: new Date(),
+        createdPlanId: null,
+      };
 
-      if (data.reply) {
-        const aiMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: data.reply,
-          sender: 'ai',
-          timestamp: new Date(),
-          createdPlanId: data.createdPlanId || null,
-        };
+      setMessages(prev => [...prev, aiMessage]);
+      // setSending(false); removed to keep loading state during stream
 
-        setMessages(prev => [...prev, aiMessage]);
+      let finalReplyText = '';
+      let createdPlanId = null;
 
-        // 保存到数据库
-        await supabase.from('chat_history').insert({
-          user_id: user!.id,
-          session_id: currentSession.id,
-          message: userMessage.text,
-          response: data.reply,
-        });
+      let buffer = '';
 
-        // 如果是第一条消息，更新会话标题
-        if (messages.length <= 1) {
-          await updateSessionTitle(currentSession.id, text);
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          
+          buffer = lines.pop() || '';
+          
+          for (const line of lines) {
+            if (line.trim() === '') continue;
+            if (line.startsWith('data: ') && !line.startsWith('data: [DONE]')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                
+                if (data.type === 'text') {
+                  finalReplyText += data.content;
+                  setMessages(prev => 
+                    prev.map(m => m.id === aiMessage.id ? { ...m, text: finalReplyText } : m)
+                  );
+                } else if (data.type === 'tool_start') {
+                  const toolNames: Record<string, string> = {
+                    'search_knowledge_base': '正在查询知识库...',
+                    'get_user_profile': '正在读取个人资料...',
+                    'create_workout_plan': '正在生成训练计划...',
+                    'calculate_nutrition_plan': '正在计算营养方案...',
+                    'update_user_profile': '正在更新个人资料...',
+                    'log_weight': '正在记录体重...',
+                    'get_workout_plans': '正在获取训练计划...',
+                    'get_nutrition_plan': '正在获取营养计划...',
+                    'get_body_data': '正在获取身体数据...'
+                  };
+                  setToolStatus(toolNames[data.name] || `正在调用工具: ${data.name}...`);
+                  console.log(`Tool started: ${data.name}`);
+                } else if (data.type === 'tool_end') {
+                  setToolStatus(null);
+                } else if (data.type === 'plan_created') {
+                  createdPlanId = data.plan_id;
+                  setMessages(prev => 
+                    prev.map(m => m.id === aiMessage.id ? { ...m, createdPlanId } : m)
+                  );
+                }
+              } catch (e) {
+                console.error("Error parsing stream chunk", e, line);
+              }
+            }
+          }
         }
-
-        // 更新会话的 updated_at
-        await supabase
-          .from('chat_sessions')
-          .update({ updated_at: new Date().toISOString() })
-          .eq('id', currentSession.id);
-
-        // 重新加载会话列表以更新顺序
-        loadSessions();
       }
+
+      // 保存到数据库
+      await supabase.from('chat_history').insert({
+        user_id: user!.id,
+        session_id: currentSession.id,
+        message: userMessage.text,
+        response: finalReplyText,
+      });
+
+      // 如果是第一条消息，更新会话标题
+      if (messages.length <= 1) {
+        await updateSessionTitle(currentSession.id, text);
+      }
+
+      // 更新会话的 updated_at
+      await supabase
+        .from('chat_sessions')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', currentSession.id);
+
+      // 重新加载会话列表以更新顺序
+      loadSessions();
+
     } catch (error: any) {
       console.error('Error:', error);
       let errorMessage = '抱歉，连接服务器出现问题，请稍后再试。';
@@ -608,7 +726,7 @@ export default function Chat() {
             </div>
           ) : (
             messages.map((message) => (
-              <div key={message.id} className="space-y-2">
+              <div key={message.id} className={`space-y-2 ${message.sender === 'ai' && !message.text ? 'hidden' : ''}`}>
                 <div
                   className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
@@ -661,12 +779,14 @@ export default function Chat() {
             ))
           )}
 
-          {sending && (
+          {sending && (toolStatus || !messages[messages.length - 1]?.text) && (
             <div className="flex justify-start">
               <div className="bg-gray-100 text-gray-900 rounded-r-xl rounded-tl-xl p-3 shadow-sm flex items-center gap-2">
                 <Bot className="h-4 w-4 text-gray-500" />
                 <Loader2 className="h-4 w-4 animate-spin text-orange-500" />
-                <span className="text-sm text-gray-500">正在思考...</span>
+                <span className="text-sm text-gray-500">
+                  {toolStatus ? toolStatus : '正在思考...'}
+                </span>
               </div>
             </div>
           )}
