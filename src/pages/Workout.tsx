@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dumbbell, Plus, ChevronRight, Play, Pause, Trash2, Activity, Clock, Target, TrendingUp, RotateCcw, Flame, MessageCircle } from 'lucide-react';
+import { Dumbbell, Plus, ChevronRight, Play, Pause, Trash2, Activity, Clock, Target, TrendingUp, RotateCcw, Flame, MessageCircle, Edit3, Save, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import { format } from 'date-fns';
@@ -66,6 +66,12 @@ export default function Workout() {
   const [plans, setPlans] = useState<WorkoutPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
+  
+  // Custom plan creation state
+  const [isCreatingCustom, setIsCreatingCustom] = useState(false);
+  const [customPlanName, setCustomPlanName] = useState('');
+  const [customPlanDays, setCustomPlanDays] = useState(3);
+  const [savingCustom, setSavingCustom] = useState(false);
 
   // 加载所有 plans
   useEffect(() => {
@@ -179,13 +185,121 @@ export default function Workout() {
     return type ? labels[type] || type : null;
   };
 
-  const getDeloadMethodLabel = (method?: string) => {
-    const labels: Record<string, string> = {
-      volume_deload: '减少组数',
-      intensity_deload: '降低重量',
-      full_deload: '全面减载',
+  // 创建自定义计划
+  const handleCreateCustomPlan = async () => {
+    if (!user || !customPlanName.trim()) {
+      alert('请输入计划名称');
+      return;
+    }
+    
+    setSavingCustom(true);
+    
+    // 初始化空的训练日
+    const exercises_schedule: DaySchedule[] = Array.from({ length: customPlanDays }).map((_, i) => ({
+      day: `第 ${i + 1} 天`,
+      focus: '全身',
+      exercises: []
+    }));
+
+    const newPlan = {
+      user_id: user.id,
+      plan_name: customPlanName,
+      difficulty_level: 'intermediate',
+      days_per_week: customPlanDays,
+      exercises_schedule,
+      is_active: false,
+      start_date: new Date().toISOString()
     };
-    return method ? labels[method] || method : null;
+
+    const { data, error } = await supabase
+      .from('workout_plans')
+      .insert(newPlan)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating custom plan:', error);
+      alert('创建失败: ' + error.message);
+    } else if (data) {
+      setPlans([data, ...plans]);
+      setIsCreatingCustom(false);
+      setCustomPlanName('');
+      setSelectedPlan(data); // 自动打开新建的计划
+    }
+    setSavingCustom(false);
+  };
+
+  // 添加动作到某一天
+  const handleAddExercise = (dayIndex: number) => {
+    if (!selectedPlan) return;
+    
+    const newExercise: Exercise = {
+      name: '新动作',
+      sets: 3,
+      reps: '8-12',
+    };
+
+    const updatedSchedule = [...selectedPlan.exercises_schedule];
+    updatedSchedule[dayIndex].exercises.push(newExercise);
+
+    updatePlanSchedule(updatedSchedule);
+  };
+
+  // 删除某天的动作
+  const handleRemoveExercise = (dayIndex: number, exerciseIndex: number) => {
+    if (!selectedPlan) return;
+    
+    const updatedSchedule = [...selectedPlan.exercises_schedule];
+    updatedSchedule[dayIndex].exercises.splice(exerciseIndex, 1);
+
+    updatePlanSchedule(updatedSchedule);
+  };
+
+  // 更新动作内容
+  const handleUpdateExercise = (dayIndex: number, exerciseIndex: number, field: keyof Exercise, value: any) => {
+    if (!selectedPlan) return;
+    
+    const updatedSchedule = [...selectedPlan.exercises_schedule];
+    updatedSchedule[dayIndex].exercises[exerciseIndex] = {
+      ...updatedSchedule[dayIndex].exercises[exerciseIndex],
+      [field]: value
+    };
+
+    updatePlanSchedule(updatedSchedule);
+  };
+
+  // 更新天数标题/重点
+  const handleUpdateDay = (dayIndex: number, field: 'day' | 'focus', value: string) => {
+    if (!selectedPlan) return;
+    
+    const updatedSchedule = [...selectedPlan.exercises_schedule];
+    updatedSchedule[dayIndex] = {
+      ...updatedSchedule[dayIndex],
+      [field]: value
+    };
+
+    updatePlanSchedule(updatedSchedule);
+  };
+
+  // 保存计划更改到数据库
+  const updatePlanSchedule = async (newSchedule: DaySchedule[]) => {
+    if (!selectedPlan) return;
+
+    // 先乐观更新 UI
+    const updatedPlan = { ...selectedPlan, exercises_schedule: newSchedule };
+    setSelectedPlan(updatedPlan);
+    setPlans(plans.map(p => p.id === updatedPlan.id ? updatedPlan : p));
+
+    // 延迟保存到数据库
+    const { error } = await supabase
+      .from('workout_plans')
+      .update({ exercises_schedule: newSchedule })
+      .eq('id', selectedPlan.id);
+
+    if (error) {
+      console.error('Error updating plan:', error);
+      alert('自动保存失败');
+    }
   };
 
   // 详情视图
@@ -370,63 +484,107 @@ export default function Workout() {
 
         {/* 每日训练 */}
         <div className="grid gap-4 md:gap-6 md:grid-cols-2">
-          {selectedPlan.exercises_schedule.map((day, index) => (
-            <div key={index} className="bg-white rounded-lg shadow overflow-hidden">
+          {selectedPlan.exercises_schedule.map((day, dayIndex) => (
+            <div key={dayIndex} className="bg-white rounded-lg shadow overflow-hidden relative group">
               <div className={`px-4 py-3 border-b flex justify-between items-center ${
                 day.day_type === 'strength' ? 'bg-red-50 border-red-100' :
                 day.day_type === 'hypertrophy' ? 'bg-blue-50 border-blue-100' :
                 day.day_type === 'power' ? 'bg-purple-50 border-purple-100' :
                 'bg-orange-50 border-orange-100'
               }`}>
-                <h3 className={`font-medium ${
-                  day.day_type === 'strength' ? 'text-red-800' :
-                  day.day_type === 'hypertrophy' ? 'text-blue-800' :
-                  day.day_type === 'power' ? 'text-purple-800' :
-                  'text-orange-800'
-                }`}>{day.day}</h3>
-                <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                  day.day_type === 'strength' ? 'bg-red-200 text-red-800' :
-                  day.day_type === 'hypertrophy' ? 'bg-blue-200 text-blue-800' :
-                  day.day_type === 'power' ? 'bg-purple-200 text-purple-800' :
-                  'bg-orange-200 text-orange-800'
-                }`}>
-                  {day.focus}
-                </span>
+                <input
+                  type="text"
+                  value={day.day}
+                  onChange={(e) => handleUpdateDay(dayIndex, 'day', e.target.value)}
+                  className="font-medium bg-transparent border-none focus:ring-0 p-0 text-sm md:text-base text-gray-900 w-24 md:w-32"
+                />
+                <input
+                  type="text"
+                  value={day.focus}
+                  onChange={(e) => handleUpdateDay(dayIndex, 'focus', e.target.value)}
+                  className={`text-xs font-medium px-2 py-1 rounded-full text-center border-none bg-white/50 focus:ring-2 focus:ring-orange-200 w-24 md:w-32 ${
+                    day.day_type === 'strength' ? 'text-red-800' :
+                    day.day_type === 'hypertrophy' ? 'text-blue-800' :
+                    day.day_type === 'power' ? 'text-purple-800' :
+                    'text-orange-800'
+                  }`}
+                />
               </div>
               <div className="p-4">
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {day.exercises.map((exercise, idx) => (
-                    <li key={idx} className="flex items-start p-2 rounded hover:bg-gray-50">
-                      <div className={`h-5 w-5 rounded flex items-center justify-center mr-3 flex-shrink-0 mt-0.5 ${
-                        exercise.type === 'compound' ? 'bg-blue-100 text-blue-600' :
-                        exercise.type === 'accessory' ? 'bg-green-100 text-green-600' :
-                        exercise.type === 'isolation' ? 'bg-gray-100 text-gray-600' :
-                        'bg-orange-100 text-orange-600'
-                      }`}>
-                        <Dumbbell className="h-3 w-3" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900">{exercise.name}</p>
-                        <div className="flex flex-wrap items-center mt-1 gap-3 text-xs text-gray-500">
-                          <span className="flex items-center">
-                            <Activity className="h-3 w-3 mr-1" />
-                            {exercise.sets} 组
-                          </span>
-                          <span className="flex items-center">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {exercise.reps} 次
-                          </span>
-                          {exercise.rest_seconds && (
-                            <span className="text-gray-400">休息 {exercise.rest_seconds}s</span>
-                          )}
+                    <li key={idx} className="relative group/item bg-gray-50 rounded-lg p-3 border border-gray-100">
+                      <button 
+                        onClick={() => handleRemoveExercise(dayIndex, idx)}
+                        className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                      
+                      <div className="pr-6">
+                        <input
+                          type="text"
+                          value={exercise.name}
+                          onChange={(e) => handleUpdateExercise(dayIndex, idx, 'name', e.target.value)}
+                          placeholder="动作名称"
+                          className="font-medium text-gray-900 bg-transparent border-b border-dashed border-gray-300 focus:border-orange-500 focus:ring-0 p-0 w-full mb-2"
+                        />
+                        
+                        <div className="grid grid-cols-3 gap-2 mt-2">
+                          <div>
+                            <label className="text-[10px] text-gray-500 block mb-1">组数</label>
+                            <div className="flex items-center bg-white rounded border px-2 py-1">
+                              <input
+                                type="number"
+                                value={exercise.sets}
+                                onChange={(e) => handleUpdateExercise(dayIndex, idx, 'sets', parseInt(e.target.value) || 0)}
+                                className="w-full bg-transparent border-none p-0 text-sm focus:ring-0 text-center"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-gray-500 block mb-1">次数</label>
+                            <div className="flex items-center bg-white rounded border px-2 py-1">
+                              <input
+                                type="text"
+                                value={exercise.reps}
+                                onChange={(e) => handleUpdateExercise(dayIndex, idx, 'reps', e.target.value)}
+                                className="w-full bg-transparent border-none p-0 text-sm focus:ring-0 text-center"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] text-gray-500 block mb-1">休息(秒)</label>
+                            <div className="flex items-center bg-white rounded border px-2 py-1">
+                              <input
+                                type="number"
+                                value={exercise.rest_seconds || ''}
+                                onChange={(e) => handleUpdateExercise(dayIndex, idx, 'rest_seconds', parseInt(e.target.value) || null)}
+                                placeholder="--"
+                                className="w-full bg-transparent border-none p-0 text-sm focus:ring-0 text-center"
+                              />
+                            </div>
+                          </div>
                         </div>
-                        {exercise.notes && (
-                          <p className="text-xs text-gray-400 mt-1">{exercise.notes}</p>
-                        )}
+                        
+                        <input
+                          type="text"
+                          value={exercise.notes || ''}
+                          onChange={(e) => handleUpdateExercise(dayIndex, idx, 'notes', e.target.value)}
+                          placeholder="添加备注 (选填)"
+                          className="text-xs text-gray-500 bg-transparent border-none focus:ring-0 p-0 w-full mt-2 placeholder-gray-300"
+                        />
                       </div>
                     </li>
                   ))}
                 </ul>
+                
+                <button
+                  onClick={() => handleAddExercise(dayIndex)}
+                  className="mt-4 w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-500 hover:border-orange-300 hover:text-orange-600 transition-colors flex items-center justify-center"
+                >
+                  <Plus className="h-4 w-4 mr-1" /> 添加动作
+                </button>
               </div>
             </div>
           ))}
@@ -440,14 +598,70 @@ export default function Workout() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900">训练计划</h1>
-        <button
-          onClick={startConsultation}
-          className="inline-flex items-center px-3 md:px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700"
-        >
-          <MessageCircle className="h-4 w-4 mr-1 md:mr-2" />
-          <span className="hidden sm:inline">咨询</span>创建计划
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setIsCreatingCustom(true)}
+            className="inline-flex items-center px-3 md:px-4 py-2 border border-orange-200 rounded-md shadow-sm text-sm font-medium text-orange-700 bg-orange-50 hover:bg-orange-100"
+          >
+            <Edit3 className="h-4 w-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">自定义</span>计划
+          </button>
+          <button
+            onClick={startConsultation}
+            className="inline-flex items-center px-3 md:px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700"
+          >
+            <MessageCircle className="h-4 w-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">AI </span>生成
+          </button>
+        </div>
       </div>
+
+      {/* 创建自定义计划表单 */}
+      {isCreatingCustom && (
+        <div className="bg-white rounded-lg shadow p-4 md:p-6 border-2 border-orange-100 relative">
+          <button 
+            onClick={() => setIsCreatingCustom(false)}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">创建自定义计划</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">计划名称</label>
+              <input
+                type="text"
+                value={customPlanName}
+                onChange={(e) => setCustomPlanName(e.target.value)}
+                placeholder="例如：我的胸背腿计划"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">每周训练天数</label>
+              <select
+                value={customPlanDays}
+                onChange={(e) => setCustomPlanDays(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
+              >
+                {[1, 2, 3, 4, 5, 6, 7].map(num => (
+                  <option key={num} value={num}>{num} 天</option>
+                ))}
+              </select>
+            </div>
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={handleCreateCustomPlan}
+                disabled={savingCustom}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {savingCustom ? '创建中...' : '开始编辑'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 计划列表 */}
       {loading ? (
