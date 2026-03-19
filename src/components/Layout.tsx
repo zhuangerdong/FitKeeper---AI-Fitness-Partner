@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Activity, Utensils, Dumbbell, MessageSquare, User, LogOut } from 'lucide-react';
+import { Home, Activity, Utensils, Dumbbell, MessageSquare, User, LogOut, Calendar as CalendarIcon } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -9,6 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
+    { name: 'Calendar', href: '/calendar', icon: CalendarIcon },
     { name: 'Nutrition', href: '/nutrition', icon: Utensils },
     { name: 'Workout', href: '/workout', icon: Dumbbell },
     { name: 'Chat', href: '/chat', icon: MessageSquare },

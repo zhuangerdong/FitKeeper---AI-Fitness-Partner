@@ -12,6 +12,7 @@ import Workout from './pages/Workout';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
+import Calendar from './pages/Calendar';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading } = useAuthStore();
@@ -117,6 +118,16 @@ export default function App() {
             <ProtectedRoute>
               <Layout>
                 <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Calendar />
               </Layout>
             </ProtectedRoute>
           }
